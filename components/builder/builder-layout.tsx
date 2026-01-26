@@ -46,7 +46,7 @@ export default function BuilderLayout({ resume, setResume }: BuilderLayoutProps)
                 onClick={() => router.push('/')}
                 className="text-foreground hover:text-primary transition-colors font-semibold"
               >
-                Resume Builder
+                Resume
               </button>
             </div>
             <div className="flex items-center gap-3">
@@ -59,7 +59,7 @@ export default function BuilderLayout({ resume, setResume }: BuilderLayoutProps)
                   }
                   className="text-sm bg-background border border-border rounded px-2 py-1 text-foreground"
                 >
-                  <option value="fshape">FShape</option>
+                  <option value="fshape">F-Shape</option>
                   <option value="harvard">Harvard</option>
                 </select>
               </div>

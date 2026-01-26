@@ -1,15 +1,15 @@
 import React from "react"
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
-import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
+import Footer from "@/components/landing/footer"
 
 const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'Resume Builder - ATS-Optimized Templates',
-  description: 'Create ATS-friendly resumes with professional templates. Build, customize, and download your perfect resume in minutes.',
+  title: 'Resume',
+  description: 'A resume builder with ATS resume templates.',
   generator: 'v0.app',
   icons: {
     icon: [
@@ -39,7 +39,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`font-sans antialiased`}>
         {children}
-        <Analytics />
+        <Footer />
       </body>
     </html>
   )
