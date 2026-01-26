@@ -18,7 +18,7 @@ const Footer = () => {
 
           <Bot className="h-6 w-6 text-muted-foreground" />
           <p className="text-sm whitespace-nowrap">
-            © 2025 <span className="text-foreground">Hello Friend</span>
+            © 2026 developed by <span className="text-foreground">Hello Friend</span>
           </p>
 
         </div>

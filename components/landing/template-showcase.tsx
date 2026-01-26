@@ -15,7 +15,7 @@ interface Template {
 const templates: Template[] = [
   {
     id: 'fshape',
-    name: 'FShape',
+    name: 'F-Shape',
     description: 'Clean and modern with optimal spacing. Perfect for tech and creative roles.',
     style: 'FShape',
     preview: 'A contemporary design that emphasizes readability and clean hierarchy.',

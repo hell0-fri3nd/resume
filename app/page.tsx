@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import TemplateShowcase from '@/components/landing/template-showcase';
@@ -8,34 +8,41 @@ import { useRouter } from 'next/navigation';
 
 export default function Home() {
   const router = useRouter();
+  const featuresRef = useRef<HTMLElement>(null);
+
+  const scrollToSection = (ref: React.RefObject<HTMLElement | null>) => {
+    ref.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background">
+
       {/* Hero Section */}
-      <section className="border-b border-border">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-32">
-          <div className="text-center space-y-6">
+      <section className="min-h-screen border-b border-border flex items-center">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="space-y-6">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground text-balance">
-              Your ATS Resume, Perfected
+              Create Resume with ATS Templates
             </h1>
             <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto text-balance">
-              Create ATS-optimized resumes that pass through applicant tracking systems. 
-              Choose from professionally designed templates that work with every recruiter's software.
+              Build ATS-friendly resumes and CVs using professional templates.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-8">
               <Button
                 size="lg"
                 onClick={() => router.push('/builder')}
                 className="bg-primary hover:bg-primary/90 text-primary-foreground"
               >
-                Get Started
+                Build my resume
               </Button>
               <Button
                 size="lg"
                 variant="outline"
                 className="border-border bg-transparent"
+                onClick={() => scrollToSection(featuresRef)} // React scroll
               >
-                Learn More
+                Browse More
               </Button>
             </div>
           </div>
@@ -43,7 +50,7 @@ export default function Home() {
       </section>
 
       {/* Features Section */}
-      <section className="border-b border-border">
+      <section ref={featuresRef} className="border-b border-border">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <Card className="p-6 bg-card border-border">
@@ -51,7 +58,7 @@ export default function Home() {
                 <div className="text-2xl font-bold text-primary">✓</div>
                 <h3 className="text-lg font-semibold text-foreground">ATS-Optimized</h3>
                 <p className="text-muted-foreground">
-                  Designed to pass through applicant tracking systems with clean formatting and proper structure.
+                  Resumes and CVs designed to pass Applicant Tracking Systems with clean formatting and proper structure.
                 </p>
               </div>
             </Card>
@@ -110,6 +117,7 @@ export default function Home() {
           </Button>
         </div>
       </section>
+
     </div>
   );
 }
