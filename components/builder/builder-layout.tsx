@@ -140,7 +140,7 @@ export default function BuilderLayout({ resume, setResume }: BuilderLayoutProps)
       </header>
 
       {/* Main Content */}
-      <div className="w-full mx-auto">
+      <div className="w-full md:w-[90%] mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-0 min-h-[calc(100vh-120px)]">
           {/* Form Section */}
           <div
