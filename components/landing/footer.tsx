@@ -35,7 +35,7 @@ const Footer = () => {
 
   return (
     <footer className="border-t border-border bg-background" role="contentinfo">
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      <div className="mx-auto w-[90%] px-4 py-12 sm:px-6 lg:px-8">
         {/* Main Footer Content */}
         <div className="grid gap-8 md:grid-cols-3 md:gap-12 lg:gap-16">
           {/* Left Section - About */}
