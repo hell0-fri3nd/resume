@@ -1,13 +1,19 @@
 'use client';
 
-import React from "react"
-
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Resume, SectionType } from '@/lib/types';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Settings } from 'lucide-react';
+import { 
+  Settings, 
+  User, 
+  FileText, 
+  Briefcase, 
+  GraduationCap, 
+  Award, 
+  Code 
+} from 'lucide-react';
 import ContactForm from './forms/contact-form';
 import SummaryForm from './forms/summary-form';
 import ExperienceForm from './forms/experience-form';
@@ -16,12 +22,62 @@ import CertificationsForm from './forms/certifications-form';
 import SkillsForm from './forms/skills-form';
 import SectionReorderer from './section-reorderer';
 
+// ============================================================================
+// Type Definitions
+// ============================================================================
+
 interface ResumeFormProps {
   resume: Resume;
   setResume: (resume: Resume) => void;
 }
 
-const SECTION_LABELS: Record<SectionType, string> = {
+interface SectionConfig {
+  label: string;
+  icon: React.ReactNode;
+  component: React.ComponentType<{ resume: Resume; setResume: (resume: Resume) => void }>;
+}
+
+// ============================================================================
+// Section Configuration
+// ============================================================================
+
+const SECTION_CONFIG: Record<SectionType, SectionConfig> = {
+  summary: {
+    label: 'Summary',
+    icon: <FileText className="w-5 h-5 md:w-6 md:h-6" />,
+    component: SummaryForm,
+  },
+  experience: {
+    label: 'Experience',
+    icon: <Briefcase className="w-5 h-5 md:w-6 md:h-6" />,
+    component: ExperienceForm,
+  },
+  education: {
+    label: 'Education',
+    icon: <GraduationCap className="w-5 h-5 md:w-6 md:h-6" />,
+    component: EducationForm,
+  },
+  certifications: {
+    label: 'Certifications',
+    icon: <Award className="w-5 h-5 md:w-6 md:h-6" />,
+    component: CertificationsForm,
+  },
+  skills: {
+    label: 'Skills',
+    icon: <Code className="w-5 h-5 md:w-6 md:h-6" />,
+    component: SkillsForm,
+  },
+};
+
+const SECTION_ICONS = {
+  summary: <FileText className="w-5 h-5 md:w-6 md:h-6" />,
+  experience: <Briefcase className="w-5 h-5 md:w-6 md:h-6" />,
+  education: <GraduationCap className="w-5 h-5 md:w-6 md:h-6" />,
+  certifications: <Award className="w-5 h-5 md:w-6 md:h-6" />,
+  skills: <Code className="w-5 h-5 md:w-6 md:h-6" />,
+};
+
+const SECTION_LABELS = {
   summary: 'Summary',
   experience: 'Experience',
   education: 'Education',
@@ -29,10 +85,7 @@ const SECTION_LABELS: Record<SectionType, string> = {
   skills: 'Skills',
 };
 
-const SECTION_COMPONENTS: Record<
-  SectionType,
-  React.ComponentType<{ resume: Resume; setResume: (resume: Resume) => void }>
-> = {
+const SECTION_COMPONENTS = {
   summary: SummaryForm,
   experience: ExperienceForm,
   education: EducationForm,
@@ -57,10 +110,11 @@ export default function ResumeForm({ resume, setResume }: ResumeFormProps) {
   });
 
   return (
-    <div className="p-6 lg:p-8">
-      <div className="space-y-4 mb-6 flex items-center justify-between">
+    <div className="p-6 lg:p-8 flex flex-col gap-6">
+      
+      <div className="space-y-4 flex items-center justify-between">
         <div className="space-y-2">
-          <h1 className="text-3xl font-bold text-foreground">Build Your Resume</h1>
+          <h1 className="text-3xl font-bold text-foreground ">Create Your Resume</h1>
           <p className="text-muted-foreground">Fill in your information section by section</p>
         </div>
         <Button
@@ -74,25 +128,58 @@ export default function ResumeForm({ resume, setResume }: ResumeFormProps) {
         </Button>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full gap-1 mb-6 bg-muted p-1 h-auto flex-wrap">
-          <TabsTrigger value="contact" className="text-xs md:text-sm">
-            Contact
-          </TabsTrigger>
-          {sectionOrder.map((section) => (
-            <TabsTrigger key={section} value={section} className="text-xs md:text-sm">
-              {SECTION_LABELS[section]}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full" orientation="vertical">
+        {/* Vertical Tabs List - Hidden on Mobile, Visible on Desktop */}
+        <div className="hidden lg:block w-full lg:w-48 flex-shrink-0">
+          <TabsList variant="line">
+            <TabsTrigger 
+              value="contact" 
+              className="justify-start gap-3 px-4 py-3 text-sm font-medium rounded-lg hover:bg-muted"
+            >
+              <User className="w-5 h-5" />
+              information
             </TabsTrigger>
-          ))}
-        </TabsList>
+            {sectionOrder.map((section) => (
+              <TabsTrigger 
+                key={section} 
+                value={section}
+                className="justify-start gap-3 px-4 py-3 text-sm font-medium rounded-lg hover:bg-muted"
+              >
+                {SECTION_CONFIG[section].icon}
+                {SECTION_CONFIG[section].label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </div>
 
-        <div className="space-y-6">
+        {/* Horizontal Tabs - Visible on Mobile, Hidden on Desktop */}
+        <div className="lg:hidden">
+          <TabsList className="grid grid-cols-3 gap-1 w-full bg-muted p-1 h-auto">
+            <TabsTrigger value="contact" className="text-xs flex flex-col items-center gap-1 py-2">
+              <User className="w-4 h-4" />
+              <span className="hidden sm:inline">Contact</span>
+            </TabsTrigger>
+            {sectionOrder.map((section) => (
+              <TabsTrigger 
+                key={section} 
+                value={section}
+                className="text-xs flex flex-col items-center gap-1 py-2"
+              >
+                {SECTION_CONFIG[section].icon}
+                <span className="hidden sm:inline text-xs">{SECTION_CONFIG[section].label}</span>
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </div>
+
+        {/* Content Area */}
+        <div className="flex-1 space-y-6">
           <TabsContent value="contact">
             <ContactForm resume={resume} setResume={setResume} />
           </TabsContent>
 
           {sectionOrder.map((section) => {
-            const Component = SECTION_COMPONENTS[section];
+            const Component = SECTION_CONFIG[section].component;
             return (
               <TabsContent key={section} value={section}>
                 <Component resume={resume} setResume={setResume} />
@@ -101,13 +188,15 @@ export default function ResumeForm({ resume, setResume }: ResumeFormProps) {
           })}
         </div>
       </Tabs>
-
+      
       <SectionReorderer
         resume={resume}
         setResume={setResume}
         isOpen={showReorderer}
         onClose={() => setShowReorderer(false)}
       />
+
+      
     </div>
   );
 }
