@@ -120,11 +120,11 @@ export default function ResumeForm({ resume, setResume }: ResumeFormProps) {
         <Button
           onClick={() => setShowReorderer(true)}
           variant="outline"
-          size="sm"
+          size="lg"
           className="gap-2 border-border text-foreground hover:bg-muted"
         >
           <Settings size={16} />
-          Organize
+          <span className="hidden md:inline">Organize</span>
         </Button>
       </div>
 
