@@ -20,6 +20,7 @@ import {
   SelectTrigger, 
   SelectValue 
 } from '../ui/select';
+import { Spinner } from '../ui/spinner';
 
 interface BuilderLayoutProps {
   resume: Resume;
@@ -50,9 +51,9 @@ export default function BuilderLayout({ resume, setResume }: BuilderLayoutProps)
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b border-border bg-card sticky top-0 z-50">
+      <header className=" border-b border-border bg-card sticky top-0 z-50">
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div className=" w-full md:w-[90%] mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between gap-4">
             
             <div className="flex items-center gap-3">
@@ -61,16 +62,20 @@ export default function BuilderLayout({ resume, setResume }: BuilderLayoutProps)
               onClick={() => router.push('/')}
               className="text-foreground hover:text-primary transition-colors font-semibold cursor-pointer"
               >
-                <span className="flex items-center gap-1">
+                <h5 className="scroll-m-20 md:text-lg font-semibold tracking-tight flex items-center gap-1">
+
+                {/* <span className=""> */}
                   <Image
                     src="/letter-r.png"
                     alt="R"
-                    width={20}
-                    height={20}
-                    className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 object-contain rounded-lg shrink-0"
+                    width={30}
+                    height={30}
+                    className="w-8 h-8 sm:w-6 sm:h-6 lg:w-10 lg:h-10 object-contain rounded-lg shrink-0"
                   />
                   esume
-                </span>
+                {/* </span> */}
+                
+                </h5>
               </Button>
             </div>
 
@@ -100,7 +105,7 @@ export default function BuilderLayout({ resume, setResume }: BuilderLayoutProps)
                   className="gap-2 md:hidden" // hide on desktop (md and up)
               >
                 {isPreview ? <Edit size={16} /> : <Eye size={16} />}
-                {isPreview ? 'Edit' : 'Preview'}
+                <span className="hidden md:inline">{isPreview ? 'Edit' : 'Preview'}</span>
               </Button>
               <Button
                 size="sm"
@@ -109,7 +114,8 @@ export default function BuilderLayout({ resume, setResume }: BuilderLayoutProps)
                 className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground disabled:opacity-50"
               >
                 <Download size={16} />
-                {isExporting ? 'Exporting...' : 'Export PDF'}
+                <span className="hidden md:inline">{isExporting ? '' : 'Export PDF'}</span>
+                {isExporting && <Spinner />}
               </Button>
             </div>
 
@@ -134,8 +140,8 @@ export default function BuilderLayout({ resume, setResume }: BuilderLayoutProps)
       </header>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 min-h-[calc(100vh-120px)]">
+      <div className="w-full mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-0 min-h-[calc(100vh-120px)]">
           {/* Form Section */}
           <div
             className={`border-r border-border overflow-y-auto ${
@@ -147,7 +153,7 @@ export default function BuilderLayout({ resume, setResume }: BuilderLayoutProps)
 
           {/* Preview Section */}
           <div
-            className={`overflow-y-auto bg-muted/50 ${
+            className={`overflow-y-auto bg-muted/100 ${
               !isPreview ? 'hidden lg:block' : ''
             }`}
           >
