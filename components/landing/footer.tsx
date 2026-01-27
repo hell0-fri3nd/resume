@@ -5,7 +5,7 @@ import { Github, Linkedin, Mail, ExternalLink, Globe } from 'lucide-react'
 
 const Footer = () => {
   const currentYear = new Date().getFullYear()
-  const version = '0.0.0'
+  const version = '0.1.0'
 
   const socialLinks = [
     {
