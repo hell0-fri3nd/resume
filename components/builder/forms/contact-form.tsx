@@ -28,7 +28,7 @@ export default function ContactForm({ resume, setResume }: ContactFormProps) {
           <div className="space-y-2">
             <Label className="text-foreground font-semibold">Full Name *</Label>
             <Input
-              placeholder="John Doe"
+              placeholder="Art Lisboa"
               value={resume.contact.fullName}
               onChange={(e) => handleChange('fullName', e.target.value)}
               className="bg-background border-border"
@@ -38,7 +38,7 @@ export default function ContactForm({ resume, setResume }: ContactFormProps) {
             <Label className="text-foreground font-semibold">Email *</Label>
             <Input
               type="email"
-              placeholder="john@example.com"
+              placeholder="lisboamillen30@gmail.com"
               value={resume.contact.email}
               onChange={(e) => handleChange('email', e.target.value)}
               className="bg-background border-border"
@@ -51,16 +51,16 @@ export default function ContactForm({ resume, setResume }: ContactFormProps) {
             <Label className="text-foreground font-semibold">Phone *</Label>
             <Input
               type="tel"
-              placeholder="(555) 123-4567"
+              placeholder="+63 91* **** ***"
               value={resume.contact.phone}
               onChange={(e) => handleChange('phone', e.target.value)}
               className="bg-background border-border"
             />
           </div>
           <div className="space-y-2">
-            <Label className="text-foreground font-semibold">Location *</Label>
+            <Label className="text-foreground font-semibold">Location</Label>
             <Input
-              placeholder="San Francisco, CA"
+              placeholder="Cainta, Rizal"
               value={resume.contact.location}
               onChange={(e) => handleChange('location', e.target.value)}
               className="bg-background border-border"
@@ -70,20 +70,49 @@ export default function ContactForm({ resume, setResume }: ContactFormProps) {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label className="text-foreground font-semibold">Website</Label>
+            <Label className="text-foreground font-semibold">LinkedIn</Label>
             <Input
-              placeholder="www.johndoe.com"
+              placeholder="linkedin.com/in/art-lisboa"
+              value={resume.contact.linkedin || ''}
+              onChange={(e) => handleChange('linkedin', e.target.value)}
+              className="bg-background border-border"
+            />
+            <Input
+              placeholder="https://www.linkedin.com/in/art-lisboa/"
+              value={resume.contact.linkedin || ''}
+              onChange={(e) => handleChange('linkedin', e.target.value)}
+              className="bg-background border-border"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label className="text-foreground font-semibold">Github</Label>
+            <Input
+              placeholder="github.com/hell0-fri3nd"
+              value={resume.contact.website || ''}
+              onChange={(e) => handleChange('website', e.target.value)}
+              className="bg-background border-border"
+            />
+            <Input
+              placeholder="https://github.com/hell0-fri3nd"
               value={resume.contact.website || ''}
               onChange={(e) => handleChange('website', e.target.value)}
               className="bg-background border-border"
             />
           </div>
+
           <div className="space-y-2">
-            <Label className="text-foreground font-semibold">LinkedIn</Label>
+            <Label className="text-foreground font-semibold">Website / Portfolio</Label>
             <Input
-              placeholder="linkedin.com/in/johndoe"
-              value={resume.contact.linkedin || ''}
-              onChange={(e) => handleChange('linkedin', e.target.value)}
+              placeholder="hello-friend-00.web.app"
+              value={resume.contact.website || ''}
+              onChange={(e) => handleChange('website', e.target.value)}
+              className="bg-background border-border"
+            />
+            <Input
+              placeholder="https://hello-friend-00.web.app"
+              value={resume.contact.website || ''}
+              onChange={(e) => handleChange('website', e.target.value)}
               className="bg-background border-border"
             />
           </div>
