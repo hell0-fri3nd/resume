@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import TemplateShowcase from '@/components/landing/template-showcase';
 import { useRouter } from 'next/navigation';
+import Image from "next/image"
 
 export default function Home() {
   const router = useRouter();
@@ -22,9 +23,31 @@ export default function Home() {
       <section className="min-h-screen border-b border-border flex items-center">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="space-y-6">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground text-balance">
-              Create Resume with ATS Templates
+            
+
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground">
+              <span className="flex flex-col items-center gap-1 sm:flex-row sm:items-center sm:justify-center sm:gap-2 whitespace-nowrap">
+                
+                <span>Create</span>
+
+                <span className="flex items-center gap-1 sm:gap-2">
+                  <Image
+                    src="/letter-r.png"
+                    alt="R"
+                    width={80}
+                    height={80}
+                    className="w-16 sm:w-20 lg:w-24 h-auto object-contain rounded-lg shrink-0"
+                  />
+                  esume
+                </span>
+
+                <span>with ATS Templates</span>
+
+              </span>
             </h1>
+
+
+
             <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto text-balance">
               Build ATS-friendly resumes and CVs using professional templates.
             </p>
@@ -34,7 +57,7 @@ export default function Home() {
                 onClick={() => router.push('/builder')}
                 className="bg-primary hover:bg-primary/90 text-primary-foreground"
               >
-                Build my resume
+                Create my resume
               </Button>
               <Button
                 size="lg"
@@ -103,7 +126,20 @@ export default function Home() {
       <section className="bg-primary/5">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
           <h2 className="text-3xl font-bold text-foreground mb-4">
-            Ready to build your resume?
+
+            <span className="flex flex-col items-center gap-1 sm:flex-row sm:items-center sm:justify-center sm:gap-2 whitespace-nowrap">
+            Ready to create your 
+                <span className="flex items-center gap-1 sm:gap-1">
+                  <Image
+                    src="/letter-r.png"
+                    alt="R"
+                    width={80}
+                    height={80}
+                    className="w-10 sm:w-5 lg:w-10 h-auto object-contain rounded-lg shrink-0"
+                  />
+                  esume
+                </span> ?
+              </span>
           </h2>
           <p className="text-muted-foreground text-lg mb-8">
             Get started with our resume builder in just a few minutes.
@@ -113,7 +149,7 @@ export default function Home() {
             onClick={() => router.push('/builder')}
             className="bg-primary hover:bg-primary/90 text-primary-foreground"
           >
-            Start Building Now
+            Create Now
           </Button>
         </div>
       </section>

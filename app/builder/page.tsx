@@ -43,7 +43,7 @@ export default function BuilderPage() {
   }, [resume]);
 
   return (
-    <BuilderLayout resume={resume} setResume={setResume} />
+    <BuilderLayout resume={0} setResume={setResume} />
   );
 }
 
