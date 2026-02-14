@@ -110,9 +110,9 @@ export default function ResumeForm({ resume, setResume }: ResumeFormProps) {
   });
 
   return (
-    <div className="p-6 lg:p-8 flex flex-col gap-6">
+    <div className="p-3 lg:p-8 flex flex-col gap-6">
       
-      <div className="space-y-4 flex items-center justify-between">
+      <div className="m-3 space-y-4 flex items-center justify-between">
         <div className="space-y-2">
           <h1 className="text-3xl font-bold text-foreground ">Create Your Resume</h1>
           <p className="text-muted-foreground">Fill in your information section by section</p>
@@ -129,15 +129,18 @@ export default function ResumeForm({ resume, setResume }: ResumeFormProps) {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full" orientation="vertical">
-        {/* Vertical Tabs List - Hidden on Mobile, Visible on Desktop */}
-        <div className="hidden lg:block w-full lg:w-48 flex-shrink-0">
+
+        <div className="lg:block w-15 lg:w-48 flex-shrink-0">
           <TabsList variant="line">
             <TabsTrigger 
               value="contact" 
               className="justify-start gap-3 px-4 py-3 text-sm font-medium rounded-lg hover:bg-muted"
             >
               <User className="w-5 h-5" />
-              information
+              <span className="hidden lg:inline">
+                information
+              </span>
+              
             </TabsTrigger>
             {sectionOrder.map((section) => (
               <TabsTrigger 
@@ -146,27 +149,9 @@ export default function ResumeForm({ resume, setResume }: ResumeFormProps) {
                 className="justify-start gap-3 px-4 py-3 text-sm font-medium rounded-lg hover:bg-muted"
               >
                 {SECTION_CONFIG[section].icon}
-                {SECTION_CONFIG[section].label}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-        </div>
-
-        {/* Horizontal Tabs - Visible on Mobile, Hidden on Desktop */}
-        <div className="lg:hidden">
-          <TabsList className="grid grid-cols-3 gap-1 w-full bg-muted p-1 h-auto">
-            <TabsTrigger value="contact" className="text-xs flex flex-col items-center gap-1 py-2">
-              <User className="w-4 h-4" />
-              <span className="hidden sm:inline">Contact</span>
-            </TabsTrigger>
-            {sectionOrder.map((section) => (
-              <TabsTrigger 
-                key={section} 
-                value={section}
-                className="text-xs flex flex-col items-center gap-1 py-2"
-              >
-                {SECTION_CONFIG[section].icon}
-                <span className="hidden sm:inline text-xs">{SECTION_CONFIG[section].label}</span>
+                <span className="hidden lg:inline">
+                  {SECTION_CONFIG[section].label}
+                </span>
               </TabsTrigger>
             ))}
           </TabsList>
@@ -187,6 +172,7 @@ export default function ResumeForm({ resume, setResume }: ResumeFormProps) {
             );
           })}
         </div>
+        
       </Tabs>
       
       <SectionReorderer
