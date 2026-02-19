@@ -35,8 +35,8 @@ export default function SummaryForm({ resume, setResume }: SummaryFormProps) {
           className="min-h-32 bg-background border-border resize-none"
         />
 
-        <p className="text-sm text-muted-foreground">
-          Keep it to 2-3 sentences. This section is optional but recommended.
+        <p className="text-sm text-muted-foreground text-red-500 font-semibold">
+        * Keep it to 2-3 sentences. This section is optional.
         </p>
       </div>
     </Card>

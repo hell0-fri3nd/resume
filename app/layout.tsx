@@ -9,7 +9,7 @@ const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: 'Resume',
-  description: 'A resume builder with ATS resume templates.',
+  description: 'build ATS-friendly resumes and CVs using professional templates.',
   generator: 'v0.app',
   icons: {
     icon: [

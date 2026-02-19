@@ -1,4 +1,4 @@
-import html2pdf from 'html2pdf.js';
+// import html2pdf from 'html2pdf.js';
 import { Resume } from './types';
 
 export async function exportResumeToPDF(resume: Resume) {
@@ -31,7 +31,7 @@ export async function exportResumeToPDF(resume: Resume) {
     };
 
     // Generate PDF
-    await html2pdf().set(options).from(clonedElement).save();
+    // await html2pdf().set(options).from(clonedElement).save();
     console.log('[v0] PDF exported successfully');
   } catch (error) {
     console.error('[v0] Error exporting PDF:', error);

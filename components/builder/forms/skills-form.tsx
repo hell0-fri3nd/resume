@@ -8,6 +8,8 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Trash2, Plus, X } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
+import CardHeaderForm from '@/components/custom/card-header-form';
+import InputField from '@/components/custom/input-field';
 
 interface SkillsFormProps {
   resume: Resume;
@@ -68,22 +70,18 @@ export default function SkillsForm({ resume, setResume }: SkillsFormProps) {
 
   return (
     <div className="space-y-4">
-      <Card className="p-6 bg-card border-border">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-semibold text-foreground">Skills</h3>
-          <Button
-            size="sm"
-            onClick={handleAddSkillCategory}
-            className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground"
-          >
-            <Plus size={16} />
-            Add Skill Category
-          </Button>
-        </div>
-      </Card>
+
+
+      <CardHeaderForm 
+      showButton
+      className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground"
+      title='Skills'
+      buttonLabel='Add Skill Category'
+      onClick={handleAddSkillCategory}/>
+
 
       {resume.skills.map((skill, index) => (
-        <Card key={skill.id} className="p-6 bg-card border-border">
+        <Card key={skill.id} className="p-6 bg-card border-border mb-6">
           <div className="flex items-start justify-between mb-4">
             <h4 className="font-semibold text-foreground">Category {index + 1}</h4>
             <Button
@@ -97,15 +95,14 @@ export default function SkillsForm({ resume, setResume }: SkillsFormProps) {
           </div>
 
           <div className="space-y-4">
-            <div className="space-y-2">
-              <Label className="text-foreground font-semibold">Category Name *</Label>
-              <Input
-                placeholder="e.g., Programming Languages, Tools, Frameworks"
-                value={skill.category}
-                onChange={(e) => handleUpdateSkillCategory(skill.id, e.target.value)}
-                className="bg-background border-border"
-              />
-            </div>
+            
+            <InputField 
+            label='School'
+            required
+            placeholder="e.g., Frontend"
+            value={skill.category}
+            onChange={(e) => handleUpdateSkillCategory(skill.id, e.target.value)}
+            className="bg-background border-border"/>
 
             <div className="space-y-3">
               <Label className="text-foreground font-semibold">Skills in this Category</Label>
@@ -113,15 +110,15 @@ export default function SkillsForm({ resume, setResume }: SkillsFormProps) {
               {skill.skills.length > 0 && (
                 <div className="flex flex-wrap gap-2">
                   {skill.skills.map((s, idx) => (
-                    <div
-                      key={idx}
-                      className="flex items-center gap-2 bg-primary/10 text-primary px-3 py-1 rounded-full text-sm"
-                    >
+                    <div key={idx}
+                    className="flex items-center 
+                    gap-2 bg-primary/10 
+                    text-primary px-3 py-1 
+                    rounded-full text-sm">
                       {s}
-                      <button
-                        onClick={() => handleRemoveSkill(skill.id, idx)}
-                        className="hover:text-primary/70 transition-colors"
-                      >
+                    
+                      <button onClick={() => handleRemoveSkill(skill.id, idx)}
+                      className="hover:text-primary/70 transition-colors">
                         <X size={14} />
                       </button>
                     </div>
@@ -131,31 +128,33 @@ export default function SkillsForm({ resume, setResume }: SkillsFormProps) {
 
               <SkillInput
                 onAdd={(skillText) => handleAddSkill(skill.id, skillText)}
-                placeholder="Add a skill and press Enter"
+                placeholder="NextJS"
               />
+              
             </div>
           </div>
         </Card>
       ))}
 
-      {resume.skills.length === 0 && (
-        <Card className="p-6 bg-muted border-border">
-          <p className="text-muted-foreground text-center">
-            No skills added yet. Click "Add Skill Category" to get started.
-          </p>
-        </Card>
-      )}
+
+            {resume.skills.length === 0 && (
+              <Card className="p-4 sm:p-6 bg-muted border-border">
+                <p className="text-center text-sm sm:text-base">
+                  No added added yet. Click{" "}
+                  <span className="inline-flex items-center gap-1 text-red-500 font-semibold text-sm sm:text-base">
+                    <Plus size={14} />
+                    Add Skill Category
+                  </span>{" "}
+                  to get started.
+                </p>
+              </Card>
+            )}
+
     </div>
   );
 }
 
-function SkillInput({
-  onAdd,
-  placeholder,
-}: {
-  onAdd: (skill: string) => void;
-  placeholder: string;
-}) {
+function SkillInput({ onAdd, placeholder, }: { onAdd: (skill: string) => void; placeholder: string; }) {
   const [value, setValue] = React.useState('');
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
