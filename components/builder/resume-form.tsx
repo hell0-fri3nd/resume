@@ -14,7 +14,7 @@ import {
   Award, 
   Code 
 } from 'lucide-react';
-import ContactForm from './forms/contact-form';
+import InformationForm from './forms/information-form';
 import SummaryForm from './forms/summary-form';
 import ExperienceForm from './forms/experience-form';
 import EducationForm from './forms/education-form';
@@ -77,37 +77,13 @@ const SECTION_ICONS = {
   skills: <Code className="w-5 h-5 md:w-6 md:h-6" />,
 };
 
-const SECTION_LABELS = {
-  summary: 'Summary',
-  experience: 'Experience',
-  education: 'Education',
-  certifications: 'Certifications',
-  skills: 'Skills',
-};
-
-const SECTION_COMPONENTS = {
-  summary: SummaryForm,
-  experience: ExperienceForm,
-  education: EducationForm,
-  certifications: CertificationsForm,
-  skills: SkillsForm,
-};
 
 export default function ResumeForm({ resume, setResume }: ResumeFormProps) {
   const [showReorderer, setShowReorderer] = useState(false);
   const [activeTab, setActiveTab] = useState('contact');
 
   // Ensure sectionOrder exists
-  const sectionOrder = resume.sectionOrder || ['summary', 'experience', 'education', 'certifications', 'skills'];
-
-  const visibleSections = sectionOrder.filter((section) => {
-    if (section === 'summary') return resume.summary;
-    if (section === 'experience') return resume.experience.length > 0;
-    if (section === 'education') return resume.education.length > 0;
-    if (section === 'certifications') return resume.certifications.length > 0;
-    if (section === 'skills') return resume.skills.length > 0;
-    return true;
-  });
+  const sectionOrder = resume.sectionOrder || ['summary', 'education', 'experience', 'certifications', 'skills'];
 
   return (
     <div className="flex flex-col gap-6">
@@ -159,7 +135,7 @@ export default function ResumeForm({ resume, setResume }: ResumeFormProps) {
         {/* Content Area */}
         <div className="flex-1 space-y-6 px-2 md:px-0">
           <TabsContent value="contact">
-            <ContactForm resume={resume} setResume={setResume} />
+            <InformationForm resume={resume} setResume={setResume} />
           </TabsContent>
 
           {sectionOrder.map((section) => {

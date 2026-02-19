@@ -7,8 +7,10 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Trash2, Plus } from 'lucide-react';
+import { Trash2, Plus, Lightbulb, Zap, TrendingUp } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
+import CardHeaderForm from '@/components/custom/card-header-form';
+import InputField from '@/components/custom/input-field';
 
 interface ExperienceFormProps {
   resume: Resume;
@@ -50,27 +52,23 @@ export default function ExperienceForm({ resume, setResume }: ExperienceFormProp
 
   return (
     <div className="space-y-4">
-      <Card className="p-6 bg-card border-border">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-semibold text-foreground">Work Experience</h3>
-          <Button
-            size="sm"
-            onClick={handleAddExperience}
-            className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground"
-          >
-            <Plus size={16} />
-            Add Experience
-          </Button>
-        </div>
-      </Card>
+
+
+      <CardHeaderForm 
+      showButton
+      className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground"
+      title='Work Experience'
+      buttonLabel='Add Experience'
+      onClick={handleAddExperience}/>
 
       {resume.experience.map((exp, index) => (
         <Card key={exp.id} className="p-6 bg-card border-border">
-          <div className="flex items-start justify-between mb-4">
+
+          <div className="flex items-start justify-between">
             <h4 className="font-semibold text-foreground">Experience {index + 1}</h4>
             <Button
               variant="ghost"
-              size="sm"
+              size="lg"
               onClick={() => handleDeleteExperience(exp.id)}
               className="text-destructive hover:text-destructive"
             >
@@ -79,47 +77,46 @@ export default function ExperienceForm({ resume, setResume }: ExperienceFormProp
           </div>
 
           <div className="space-y-4">
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label className="text-foreground font-semibold">Job Title *</Label>
-                <Input
-                  placeholder="Software Engineer"
-                  value={exp.jobTitle}
-                  onChange={(e) => handleUpdateExperience(exp.id, 'jobTitle', e.target.value)}
-                  className="bg-background border-border"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-foreground font-semibold">Company *</Label>
-                <Input
-                  placeholder="Tech Company Inc"
-                  value={exp.company}
-                  onChange={(e) => handleUpdateExperience(exp.id, 'company', e.target.value)}
-                  className="bg-background border-border"
-                />
-              </div>
+
+              <InputField 
+              label='Job Title'
+              required
+              placeholder="Software Engineer"
+              value={exp.jobTitle}
+              onChange={(e) => handleUpdateExperience(exp.id, 'jobTitle', e.target.value)}
+              className="bg-background border-border"/>
+
+              <InputField 
+              label='Company'
+              required
+              placeholder="Tech Company Inc"
+              value={exp.company}
+              onChange={(e) => handleUpdateExperience(exp.id, 'company', e.target.value)}
+              className="bg-background border-border"/>
+
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label className="text-foreground font-semibold">Start Date *</Label>
-                <Input
-                  type="date"
-                  value={exp.startDate}
-                  onChange={(e) => handleUpdateExperience(exp.id, 'startDate', e.target.value)}
-                  className="bg-background border-border"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-foreground font-semibold">End Date</Label>
-                <Input
-                  type="date"
-                  value={exp.endDate}
-                  onChange={(e) => handleUpdateExperience(exp.id, 'endDate', e.target.value)}
-                  disabled={exp.currentlyWorking}
-                  className="bg-background border-border disabled:opacity-50"
-                />
-              </div>
+
+              <InputField 
+              label='Start Date'
+              type="date"
+              required
+              value={exp.startDate}
+              onChange={(e) => handleUpdateExperience(exp.id, 'startDate', e.target.value)}
+              className="bg-background border-border"/>
+
+              <InputField 
+              label='End Date'
+              type="date"
+              required
+              value={exp.endDate}
+              onChange={(e) => handleUpdateExperience(exp.id, 'endDate', e.target.value)}
+              disabled={exp.currentlyWorking}
+              className="bg-background border-border disabled:opacity-50"/>
+
             </div>
 
             <div className="flex items-center space-x-2">
@@ -138,21 +135,44 @@ export default function ExperienceForm({ resume, setResume }: ExperienceFormProp
             <div className="space-y-2">
               <Label className="text-foreground font-semibold">Description</Label>
               <Textarea
-                placeholder="Describe your responsibilities and achievements..."
-                value={exp.description}
-                onChange={(e) => handleUpdateExperience(exp.id, 'description', e.target.value)}
-                className="min-h-24 bg-background border-border resize-none"
+              placeholder="* Deployed a full-stack web application and reduced development timelines by 50% (12 → 6 months) across two
+              municipal LGU systems by developing new features, modularized customizations, refactored legacy code, and
+              resolved critical defects using CodeIgniter 3, jQuery & Bootstrap and MySQL. "
+              value={exp.description}
+              onChange={(e) => handleUpdateExperience(exp.id, 'description', e.target.value)}
+              className="min-h-24 bg-background border-border resize-none"
               />
-              <p className="text-sm text-muted-foreground">Use bullet points or paragraphs</p>
+
+              <div className="flex items-start gap-2">
+                <Lightbulb className="w-3.5 h-3.5 sm:w-4 sm:h-4 mt-0.5 text-yellow-500 shrink-0" />
+                <p>Use bullet points instead of long paragraphs.</p>
+              </div>
+
+              <div className="flex items-start gap-2">
+                <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4 mt-0.5 text-blue-500 shrink-0" />
+                <p>Start each bullet with strong power verbs.</p>
+              </div>
+
+              <div className="flex items-start gap-2">
+                <TrendingUp className="w-3.5 h-3.5 sm:w-4 sm:h-4 mt-0.5 text-green-500 shrink-0" />
+                <p>Add measurable results.</p>
+              </div>
+
             </div>
+
           </div>
         </Card>
       ))}
 
       {resume.experience.length === 0 && (
-        <Card className="p-6 bg-muted border-border">
-          <p className="text-muted-foreground text-center">
-            No experience added yet. Click "Add Experience" to get started.
+        <Card className="p-4 sm:p-6 bg-muted border-border">
+          <p className="text-center text-sm sm:text-base">
+            No experience added yet. Click{" "}
+            <span className="inline-flex items-center gap-1 text-red-500 font-semibold text-sm sm:text-base">
+              <Plus size={14} />
+              Add Experience
+            </span>{" "}
+            to get started.
           </p>
         </Card>
       )}
