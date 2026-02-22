@@ -53,16 +53,16 @@ export default function InformationForm({ resume, setResume }: ContactFormProps)
           required
           type="tel"
           placeholder="+63 91* **** ***"
-          value={resume.contact.fullName}
+          value={resume.contact.phone}
           onChange={(e) => handleChange('phone', e.target.value)}
           className="bg-background border-border"/>
 
           <InputField 
           label='Location'
-          type="tel"
-          placeholder="+63 91* **** ***"
-          value={resume.contact.fullName}
-          onChange={(e) => handleChange('phone', e.target.value)}
+          type="text"
+          placeholder="Cainta, Rizal"
+          value={resume.contact.location}
+          onChange={(e) => handleChange('location', e.target.value)}
           className="bg-background border-border"/>
 
         </div>
@@ -76,12 +76,6 @@ export default function InformationForm({ resume, setResume }: ContactFormProps)
             value={resume.contact.linkedin || ''}
             onChange={(e) => handleChange('linkedin', e.target.value)}
             className="bg-background border-border"/>
-
-            <InputField 
-            placeholder="https://www.linkedin.com/in/art-lisboa/"
-            value={resume.contact.linkedin || ''}
-            onChange={(e) => handleChange('linkedin', e.target.value)}
-            className="bg-background border-border"/>
           </div>
 
           <div className="space-y-2">
@@ -92,11 +86,6 @@ export default function InformationForm({ resume, setResume }: ContactFormProps)
             onChange={(e) => handleChange('website', e.target.value)}
             className="bg-background border-border"/>
 
-            <InputField 
-            placeholder="https://github.com/hell0-fri3nd"
-            value={resume.contact.linkedin || ''}
-            onChange={(e) => handleChange('linkedin', e.target.value)}
-            className="bg-background border-border"/>
           </div>
 
           <div className="space-y-2">
@@ -105,12 +94,6 @@ export default function InformationForm({ resume, setResume }: ContactFormProps)
             placeholder="hello-friend-00.web.app"
             value={resume.contact.website || ''}
             onChange={(e) => handleChange('website', e.target.value)}
-            className="bg-background border-border"/>
-
-            <InputField 
-            placeholder="https://hello-friend-00.web.app"
-            value={resume.contact.linkedin || ''}
-            onChange={(e) => handleChange('linkedin', e.target.value)}
             className="bg-background border-border"/>
           </div>
           

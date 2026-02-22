@@ -85,13 +85,13 @@ export default function EducationForm({ resume, setResume }: EducationFormProps)
               className="bg-background border-border"/>
 
               <InputField 
-              label='Degree'
-              required
-              placeholder="Bachelor of Science"
-              value={edu.degree}
-              onChange={(e) => handleUpdateEducation(edu.id, 'degree', e.target.value)}
+              label='Graduation Date'
+              type="date"
+              value={edu.graduationDate}
+              onChange={(e) => handleUpdateEducation(edu.id, 'graduationDate', e.target.value)}
               className="bg-background border-border"/>
-              
+
+
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -105,10 +105,11 @@ export default function EducationForm({ resume, setResume }: EducationFormProps)
               className="bg-background border-border"/>
 
               <InputField 
-              label='Graduation Date'
-              type="date"
-              value={edu.graduationDate}
-              onChange={(e) => handleUpdateEducation(edu.id, 'graduationDate', e.target.value)}
+              label='Degree'
+              required
+              placeholder="Bachelor of Science"
+              value={edu.degree}
+              onChange={(e) => handleUpdateEducation(edu.id, 'degree', e.target.value)}
               className="bg-background border-border"/>
 
             </div>
