@@ -8,6 +8,7 @@ interface HarvardTemplateProps {
 export default function HarvardTemplate({ resume }: HarvardTemplateProps) {
   return (
     <div className="bg-white text-black p-10 font-serif max-w-4xl mx-auto min-h-screen">
+      
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-4xl font-bold text-black text-center">{resume.contact.fullName}</h1>
