@@ -1,21 +1,23 @@
 'use client';
 
-import { Resume } from '@/lib/types';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { selectResumeById, setSummary } from '@/store/slices/resumes-slice';
 
 interface SummaryFormProps {
-  resume: Resume;
-  setResume: (resume: Resume) => void;
+  resumeId: string;
 }
 
-export default function SummaryForm({ resume, setResume }: SummaryFormProps) {
+export default function SummaryForm({ resumeId }: SummaryFormProps) {
+  const dispatch = useAppDispatch();
+  const resume = useAppSelector((state) => selectResumeById(state, resumeId));
+
+  if (!resume) return null;
+
   const handleChange = (value: string) => {
-    setResume({
-      ...resume,
-      summary: value,
-    });
+    dispatch(setSummary({ id: resumeId, summary: value }));
   };
 
   return (

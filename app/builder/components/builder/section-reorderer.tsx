@@ -1,14 +1,15 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Resume, SectionType } from '@/lib/types';
+import { SectionType } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { GripVertical, X } from 'lucide-react';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { reorderSections, selectResumeById } from '@/store/slices/resumes-slice';
 
 interface SectionReordererProps {
-  resume: Resume;
-  setResume: (resume: Resume) => void;
+  resumeId: string;
   isOpen: boolean;
   onClose: () => void;
 }
@@ -23,8 +24,10 @@ const SECTION_LABELS: Record<SectionType, string> = {
 
 const AVAILABLE_SECTIONS: SectionType[] = ['summary', 'experience', 'education', 'certifications', 'skills'];
 
-export default function SectionReorderer({ resume, setResume, isOpen, onClose }: SectionReordererProps) {
-  const [sections, setSections] = useState<SectionType[]>(resume.sectionOrder);
+export default function SectionReorderer({ resumeId, isOpen, onClose }: SectionReordererProps) {
+  const dispatch = useAppDispatch();
+  const resume = useAppSelector((state) => selectResumeById(state, resumeId));
+  const [sections, setSections] = useState<SectionType[]>(resume?.sectionOrder ?? []);
   const [draggedItem, setDraggedItem] = useState<SectionType | null>(null);
 
   const handleDragStart = (section: SectionType) => {
@@ -58,10 +61,7 @@ export default function SectionReorderer({ resume, setResume, isOpen, onClose }:
   };
 
   const handleSave = () => {
-    setResume({
-      ...resume,
-      sectionOrder: sections,
-    });
+    dispatch(reorderSections({ id: resumeId, sectionOrder: sections }));
     onClose();
   };
 

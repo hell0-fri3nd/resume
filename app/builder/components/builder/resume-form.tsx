@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Resume, SectionType } from '@/lib/types';
-import { Card } from '@/components/ui/card';
+import { SectionType } from '@/lib/types';
+import { useAppSelector } from '@/store/hooks';
+import { selectResumeById } from '@/store/slices/resumes-slice';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { 
@@ -27,14 +28,13 @@ import SectionReorderer from './section-reorderer';
 // ============================================================================
 
 interface ResumeFormProps {
-  resume: Resume;
-  setResume: (resume: Resume) => void;
+  resumeId: string;
 }
 
 interface SectionConfig {
   label: string;
   icon: React.ReactNode;
-  component: React.ComponentType<{ resume: Resume; setResume: (resume: Resume) => void }>;
+  component: React.ComponentType<{ resumeId: string }>;
 }
 
 // ============================================================================
@@ -78,12 +78,13 @@ const SECTION_ICONS = {
 };
 
 
-export default function ResumeForm({ resume, setResume }: ResumeFormProps) {
+export default function ResumeForm({ resumeId }: ResumeFormProps) {
   const [showReorderer, setShowReorderer] = useState(false);
   const [activeTab, setActiveTab] = useState('contact');
+  const resume = useAppSelector((state) => selectResumeById(state, resumeId));
 
   // Ensure sectionOrder exists
-  const sectionOrder = resume.sectionOrder || ['summary', 'education', 'experience', 'certifications', 'skills'];
+  const sectionOrder = resume?.sectionOrder || ['summary', 'education', 'experience', 'certifications', 'skills'];
 
   return (
     <div className="flex flex-col gap-6">
@@ -135,14 +136,14 @@ export default function ResumeForm({ resume, setResume }: ResumeFormProps) {
         {/* Content Area */}
         <div className="flex-1 space-y-6 px-2 md:px-0">
           <TabsContent value="contact">
-            <InformationForm resume={resume} setResume={setResume} />
+            <InformationForm resumeId={resumeId} />
           </TabsContent>
 
           {sectionOrder.map((section) => {
             const Component = SECTION_CONFIG[section].component;
             return (
               <TabsContent key={section} value={section}>
-                <Component resume={resume} setResume={setResume} />
+                <Component resumeId={resumeId} />
               </TabsContent>
             );
           })}
@@ -151,8 +152,7 @@ export default function ResumeForm({ resume, setResume }: ResumeFormProps) {
       </Tabs>
       
       <SectionReorderer
-        resume={resume}
-        setResume={setResume}
+        resumeId={resumeId}
         isOpen={showReorderer}
         onClose={() => setShowReorderer(false)}
       />

@@ -1,53 +1,48 @@
 'use client';
 
-import { Resume, Experience } from '@/lib/types';
-import { Input } from '@/components/ui/input';
+import { Experience } from '@/lib/types';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Trash2, Plus, Lightbulb, Zap, TrendingUp } from 'lucide-react';
-import { v4 as uuidv4 } from 'uuid';
 import CardHeaderForm from '@/components/custom/card-header-form';
 import InputField from '@/components/custom/input-field';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import {
+  addExperience,
+  removeExperience,
+  selectResumeById,
+  updateExperience,
+} from '@/store/slices/resumes-slice';
 
 interface ExperienceFormProps {
-  resume: Resume;
-  setResume: (resume: Resume) => void;
+  resumeId: string;
 }
 
-export default function ExperienceForm({ resume, setResume }: ExperienceFormProps) {
+export default function ExperienceForm({ resumeId }: ExperienceFormProps) {
+  const dispatch = useAppDispatch();
+  const resume = useAppSelector((state) => selectResumeById(state, resumeId));
+
+  if (!resume) return null;
+
   const handleAddExperience = () => {
-    const newExperience: Experience = {
-      id: uuidv4(),
-      jobTitle: '',
-      company: '',
-      startDate: '',
-      endDate: '',
-      currentlyWorking: false,
-      description: '',
-    };
-    setResume({
-      ...resume,
-      experience: [...resume.experience, newExperience],
-    });
+    dispatch(addExperience({ id: resumeId }));
   };
 
-  const handleUpdateExperience = (id: string, field: keyof Experience, value: string | boolean) => {
-    setResume({
-      ...resume,
-      experience: resume.experience.map((exp) =>
-        exp.id === id ? { ...exp, [field]: value } : exp
-      ),
-    });
+  const handleUpdateExperience = (
+    itemId: string,
+    field: keyof Experience,
+    value: string | boolean
+  ) => {
+    dispatch(
+      updateExperience({ id: resumeId, itemId, changes: { [field]: value } })
+    );
   };
 
-  const handleDeleteExperience = (id: string) => {
-    setResume({
-      ...resume,
-      experience: resume.experience.filter((exp) => exp.id !== id),
-    });
+  const handleDeleteExperience = (itemId: string) => {
+    dispatch(removeExperience({ id: resumeId, itemId }));
   };
 
   return (

@@ -1,71 +1,51 @@
 'use client';
 
 import React from 'react';
-import { Resume, Skill } from '@/lib/types';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Trash2, Plus, X } from 'lucide-react';
-import { v4 as uuidv4 } from 'uuid';
 import CardHeaderForm from '@/components/custom/card-header-form';
 import InputField from '@/components/custom/input-field';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import {
+  addSkillGroup,
+  addSkillToGroup,
+  removeSkillFromGroup,
+  removeSkillGroup,
+  selectResumeById,
+  updateSkillGroup,
+} from '@/store/slices/resumes-slice';
 
 interface SkillsFormProps {
-  resume: Resume;
-  setResume: (resume: Resume) => void;
+  resumeId: string;
 }
 
-export default function SkillsForm({ resume, setResume }: SkillsFormProps) {
+export default function SkillsForm({ resumeId }: SkillsFormProps) {
+  const dispatch = useAppDispatch();
+  const resume = useAppSelector((state) => selectResumeById(state, resumeId));
+
+  if (!resume) return null;
+
   const handleAddSkillCategory = () => {
-    const newSkill: Skill = {
-      id: uuidv4(),
-      category: '',
-      skills: [],
-    };
-    setResume({
-      ...resume,
-      skills: [...resume.skills, newSkill],
-    });
+    dispatch(addSkillGroup({ id: resumeId }));
   };
 
-  const handleUpdateSkillCategory = (id: string, category: string) => {
-    setResume({
-      ...resume,
-      skills: resume.skills.map((skill) =>
-        skill.id === id ? { ...skill, category } : skill
-      ),
-    });
+  const handleUpdateSkillCategory = (itemId: string, category: string) => {
+    dispatch(updateSkillGroup({ id: resumeId, itemId, changes: { category } }));
   };
 
-  const handleAddSkill = (skillId: string, skillText: string) => {
-    if (!skillText.trim()) return;
-    setResume({
-      ...resume,
-      skills: resume.skills.map((skill) =>
-        skill.id === skillId
-          ? { ...skill, skills: [...skill.skills, skillText.trim()] }
-          : skill
-      ),
-    });
+  const handleAddSkill = (itemId: string, skillText: string) => {
+    dispatch(addSkillToGroup({ id: resumeId, itemId, skill: skillText }));
   };
 
-  const handleRemoveSkill = (skillId: string, skillIndex: number) => {
-    setResume({
-      ...resume,
-      skills: resume.skills.map((skill) =>
-        skill.id === skillId
-          ? { ...skill, skills: skill.skills.filter((_, i) => i !== skillIndex) }
-          : skill
-      ),
-    });
+  const handleRemoveSkill = (itemId: string, skillIndex: number) => {
+    dispatch(removeSkillFromGroup({ id: resumeId, itemId, index: skillIndex }));
   };
 
-  const handleDeleteSkillCategory = (id: string) => {
-    setResume({
-      ...resume,
-      skills: resume.skills.filter((skill) => skill.id !== id),
-    });
+  const handleDeleteSkillCategory = (itemId: string) => {
+    dispatch(removeSkillGroup({ id: resumeId, itemId }));
   };
 
   return (
