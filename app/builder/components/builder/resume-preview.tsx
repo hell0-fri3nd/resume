@@ -1,8 +1,8 @@
 'use client';
 
 import { Resume } from '@/lib/types';
-import FShapeTemplate from '@/components/templates/fshape-template';
-import HarvardTemplate from '@/components/templates/harvard-template';
+import FShapeTemplate from '../templates/fshape-template';
+import HarvardTemplate from '../templates/harvard-template';
 
 interface ResumePreviewProps {
   resume: Resume;

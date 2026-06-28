@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Resume, defaultResume } from '@/lib/types';
-import BuilderLayout from '@/components/builder/builder-layout';
+import BuilderLayout from './components/builder/builder-layout';
 // import Loading from './loading'; // Import the Loading component
 
 export default function BuilderPage() {

@@ -19,8 +19,9 @@ import {
   SelectItem, 
   SelectTrigger, 
   SelectValue 
-} from '../ui/select';
-import { Spinner } from '../ui/spinner';
+} from '@/components/ui/select';
+import { Spinner } from '@/components/ui/spinner';
+
 
 interface BuilderLayoutProps {
   resume: Resume;
