@@ -54,7 +54,7 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-8">
               <Button
                 size="lg"
-                onClick={() => router.push('/builder')}
+                onClick={() => router.push('/dashboard')}
                 className="bg-primary hover:bg-primary/90 text-primary-foreground"
               >
                 Create my resume

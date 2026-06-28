@@ -4,41 +4,59 @@ import ResumeForm from './resume-form';
 import ResumePreview from './resume-preview';
 import Image from 'next/image';
 import { useState } from 'react';
-import { Resume } from '@/lib/types';
 import { Button } from '@/components/ui/button';
-import { 
-  Download, 
-  Eye, 
-  Edit 
+import {
+  Download,
+  Eye,
+  Edit,
+  ArrowLeft
 } from 'lucide-react';
+import { Input } from '@/components/ui/input';
 import { useRouter } from 'next/navigation';
-import { FShapePDFTemplate } from '@/lib/pdf-export';
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import { FShapePDFTemplate, HarvardPDFTemplate } from '@/lib/pdf-export';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
 } from '@/components/ui/select';
 import { Spinner } from '@/components/ui/spinner';
-
+import { pdf } from '@react-pdf/renderer';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { renameResume, selectResumeById, setTemplate } from '@/store/slices/resumes-slice';
+import { togglePreview } from '@/store/slices/builder-slice';
 
 interface BuilderLayoutProps {
-  resume: Resume;
-  setResume: (resume: Resume) => void;
+  resumeId: string;
 }
 
-export default function BuilderLayout({ resume, setResume }: BuilderLayoutProps) {
-  const [isPreview, setIsPreview] = useState(false);
+export default function BuilderLayout({ resumeId }: BuilderLayoutProps) {
+  const dispatch = useAppDispatch();
+  const resume = useAppSelector((state) => selectResumeById(state, resumeId))!;
+  const isPreview = useAppSelector((state) => state.builder.isPreview);
   const [isExporting, setIsExporting] = useState(false);
+  const [title, setTitle] = useState(resume.name);
   const router = useRouter();
+
+  const handleTitleChange = (value: string) => {
+    setTitle(value);
+    dispatch(renameResume({ id: resumeId, name: value }));
+  };
 
   const handleDownloadPDF = async () => {
     try {
       setIsExporting(true);
       await new Promise((resolve) => setTimeout(resolve, 100));
 
-      const instance = pdf(<FShapePDFTemplate resume={resume} />);
+      const doc =
+        resume.template === 'harvard' ? (
+          <HarvardPDFTemplate resume={resume} />
+        ) : (
+          <FShapePDFTemplate resume={resume} />
+        );
+
+      const instance = pdf(doc);
       const blob = await instance.toBlob();
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -55,7 +73,7 @@ export default function BuilderLayout({ resume, setResume }: BuilderLayoutProps)
   };
 
   const handleTemplateChange = (template: 'fshape' | 'harvard') => {
-    setResume({ ...resume, template });
+    dispatch(setTemplate({ id: resumeId, template }));
   };
 
   return (
@@ -66,27 +84,34 @@ export default function BuilderLayout({ resume, setResume }: BuilderLayoutProps)
         <div className=" w-full md:w-[90%] mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between gap-4">
             
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
               <Button
-              variant="link"
-              onClick={() => router.push('/')}
-              className="text-foreground hover:text-primary transition-colors font-semibold cursor-pointer"
+                variant="outline"
+                size="sm"
+                onClick={() => router.push('/dashboard')}
+                className="gap-2 shrink-0 border-border text-foreground hover:bg-muted"
               >
-                <h5 className="scroll-m-20 md:text-lg font-semibold tracking-tight flex items-center gap-1">
-
-                {/* <span className=""> */}
-                  <Image
-                    src="/letter-r.png"
-                    alt="R"
-                    width={30}
-                    height={30}
-                    className="w-8 h-8 sm:w-6 sm:h-6 lg:w-10 lg:h-10 object-contain rounded-lg shrink-0"
-                  />
-                  esume
-                {/* </span> */}
-                
-                </h5>
+                <ArrowLeft size={16} />
+                <span className="hidden sm:inline">Dashboard</span>
               </Button>
+
+              <Image
+                src="/letter-r.png"
+                alt="R"
+                width={30}
+                height={30}
+                onClick={() => router.push('/')}
+                className="hidden sm:block w-8 h-8 object-contain rounded-lg shrink-0 cursor-pointer"
+              />
+
+              {/* Editable resume title */}
+              <Input
+                value={title}
+                onChange={(e) => handleTitleChange(e.target.value)}
+                placeholder="Untitled Resume"
+                aria-label="Resume title"
+                className="min-w-0 max-w-xs flex-1 border-transparent bg-transparent text-base font-semibold text-foreground hover:border-border focus-visible:border-border focus-visible:bg-background"
+              />
             </div>
 
             <div className="flex items-center gap-3">
@@ -111,7 +136,7 @@ export default function BuilderLayout({ resume, setResume }: BuilderLayoutProps)
               <Button
                 variant={isPreview ? 'default' : 'outline'}
                 size="sm"
-                onClick={() => setIsPreview(!isPreview)}
+                onClick={() => dispatch(togglePreview())}
                   className="gap-2 md:hidden" // hide on desktop (md and up)
               >
                 {isPreview ? <Edit size={16} /> : <Eye size={16} />}
@@ -158,7 +183,7 @@ export default function BuilderLayout({ resume, setResume }: BuilderLayoutProps)
               isPreview ? 'hidden lg:block' : ''
             }`}
           >
-            <ResumeForm resume={resume} setResume={setResume} />
+            <ResumeForm resumeId={resumeId} />
           </div>
 
           {/* Preview Section */}

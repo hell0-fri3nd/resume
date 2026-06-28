@@ -1,51 +1,47 @@
 'use client';
 
-import { Resume, Education } from '@/lib/types';
-import { Input } from '@/components/ui/input';
+import { Education } from '@/lib/types';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Trash2, Plus, Lightbulb } from 'lucide-react';
-import { v4 as uuidv4 } from 'uuid';
 import CardHeaderForm from '@/components/custom/card-header-form';
 import InputField from '@/components/custom/input-field';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import {
+  addEducation,
+  removeEducation,
+  selectResumeById,
+  updateEducation,
+} from '@/store/slices/resumes-slice';
 
 interface EducationFormProps {
-  resume: Resume;
-  setResume: (resume: Resume) => void;
+  resumeId: string;
 }
 
-export default function EducationForm({ resume, setResume }: EducationFormProps) {
+export default function EducationForm({ resumeId }: EducationFormProps) {
+  const dispatch = useAppDispatch();
+  const resume = useAppSelector((state) => selectResumeById(state, resumeId));
+
+  if (!resume) return null;
+
   const handleAddEducation = () => {
-    const newEducation: Education = {
-      id: uuidv4(),
-      school: '',
-      degree: '',
-      field: '',
-      graduationDate: '',
-      details: '',
-    };
-    setResume({
-      ...resume,
-      education: [...resume.education, newEducation],
-    });
+    dispatch(addEducation({ id: resumeId }));
   };
 
-  const handleUpdateEducation = (id: string, field: keyof Education, value: string) => {
-    setResume({
-      ...resume,
-      education: resume.education.map((edu) =>
-        edu.id === id ? { ...edu, [field]: value } : edu
-      ),
-    });
+  const handleUpdateEducation = (
+    itemId: string,
+    field: keyof Education,
+    value: string
+  ) => {
+    dispatch(
+      updateEducation({ id: resumeId, itemId, changes: { [field]: value } })
+    );
   };
 
-  const handleDeleteEducation = (id: string) => {
-    setResume({
-      ...resume,
-      education: resume.education.filter((edu) => edu.id !== id),
-    });
+  const handleDeleteEducation = (itemId: string) => {
+    dispatch(removeEducation({ id: resumeId, itemId }));
   };
 
   return (

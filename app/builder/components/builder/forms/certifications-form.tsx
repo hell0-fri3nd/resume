@@ -1,52 +1,49 @@
 'use client';
 
-import React from 'react';
-import { Resume, Certification } from '@/lib/types';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Certification } from '@/lib/types';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Trash2, Plus } from 'lucide-react';
-import { v4 as uuidv4 } from 'uuid';
 import CardHeaderForm from '@/components/custom/card-header-form';
 import InputField from '@/components/custom/input-field';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import {
+  addCertification as addCertificationAction,
+  removeCertification as removeCertificationAction,
+  selectResumeById,
+  updateCertification as updateCertificationAction,
+} from '@/store/slices/resumes-slice';
 
 interface CertificationsFormProps {
-  resume: Resume;
-  setResume: (resume: Resume) => void;
+  resumeId: string;
 }
 
-export default function CertificationsForm({ resume, setResume }: CertificationsFormProps) {
+export default function CertificationsForm({ resumeId }: CertificationsFormProps) {
+  const dispatch = useAppDispatch();
+  const resume = useAppSelector((state) => selectResumeById(state, resumeId));
+
+  if (!resume) return null;
+
   const addCertification = () => {
-    const newCertification: Certification = {
-      id: uuidv4(),
-      title: '',
-      issuer: '',
-      issueDate: '',
-      expiryDate: '',
-      credentialId: '',
-      credentialUrl: '',
-    };
-    setResume({
-      ...resume,
-      certifications: [...resume.certifications, newCertification],
-    });
+    dispatch(addCertificationAction({ id: resumeId }));
   };
 
-  const updateCertification = (id: string, field: keyof Certification, value: string) => {
-    setResume({
-      ...resume,
-      certifications: resume.certifications.map((cert) =>
-        cert.id === id ? { ...cert, [field]: value } : cert
-      ),
-    });
+  const updateCertification = (
+    itemId: string,
+    field: keyof Certification,
+    value: string
+  ) => {
+    dispatch(
+      updateCertificationAction({
+        id: resumeId,
+        itemId,
+        changes: { [field]: value },
+      })
+    );
   };
 
-  const removeCertification = (id: string) => {
-    setResume({
-      ...resume,
-      certifications: resume.certifications.filter((cert) => cert.id !== id),
-    });
+  const removeCertification = (itemId: string) => {
+    dispatch(removeCertificationAction({ id: resumeId, itemId }));
   };
 
   return (

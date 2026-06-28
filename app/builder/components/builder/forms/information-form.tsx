@@ -1,25 +1,23 @@
 'use client';
 
-import { Resume } from '@/lib/types';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Contact } from '@/lib/types';
 import { Card } from '@/components/ui/card';
 import InputField from '@/components/custom/input-field';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { selectResumeById, updateContact } from '@/store/slices/resumes-slice';
 
 interface ContactFormProps {
-  resume: Resume;
-  setResume: (resume: Resume) => void;
+  resumeId: string;
 }
 
-export default function InformationForm({ resume, setResume }: ContactFormProps) {
-  const handleChange = (field: keyof typeof resume.contact, value: string) => {
-    setResume({
-      ...resume,
-      contact: {
-        ...resume.contact,
-        [field]: value,
-      },
-    });
+export default function InformationForm({ resumeId }: ContactFormProps) {
+  const dispatch = useAppDispatch();
+  const resume = useAppSelector((state) => selectResumeById(state, resumeId));
+
+  if (!resume) return null;
+
+  const handleChange = (field: keyof Contact, value: string) => {
+    dispatch(updateContact({ id: resumeId, field, value }));
   };
 
   return (

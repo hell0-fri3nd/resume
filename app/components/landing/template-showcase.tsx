@@ -4,6 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useRouter } from 'next/navigation';
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from '@/components/ui/carousel';
+import { useAppDispatch } from '@/store/hooks';
+import { createResume } from '@/store/slices/resumes-slice';
+import type { TemplateType } from '@/lib/types';
 
 interface Template {
   id: string;
@@ -33,9 +36,13 @@ const templates: Template[] = [
 
 export default function TemplateShowcase() {
   const router = useRouter();
+  const dispatch = useAppDispatch();
 
   const handleGetStarted = (templateId: string) => {
-    router.push(`/builder?template=${templateId}`);
+    const action = dispatch(
+      createResume({ name: 'Untitled Resume', template: templateId as TemplateType })
+    );
+    router.push(`/builder/${action.payload.id}`);
   };
 
   return (

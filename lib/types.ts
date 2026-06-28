@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from 'uuid';
+
 export interface Contact {
   fullName: string;
   email: string;
@@ -44,33 +46,60 @@ export interface Certification {
 
 export type SectionType = 'summary' | 'experience' | 'education' | 'certifications' | 'skills';
 
+export type TemplateType = 'fshape' | 'harvard';
+
+export const DEFAULT_SECTION_ORDER: SectionType[] = [
+  'summary',
+  'experience',
+  'education',
+  'certifications',
+  'skills',
+];
+
 export interface Resume {
   id: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
   contact: Contact;
   experience: Experience[];
   education: Education[];
   certifications: Certification[];
   skills: Skill[];
   summary?: string;
-  template: 'fshape' | 'harvard';
+  template: TemplateType;
   sectionOrder: SectionType[];
 }
 
-export const defaultResume: Resume = {
-  id: 'default',
-  contact: {
-    fullName: '',
-    email: '',
-    phone: '',
-    location: '',
-    website: '',
-    linkedin: '',
-  },
-  experience: [],
-  education: [],
-  certifications: [],
-  skills: [],
-  summary: '',
-  template: 'fshape',
-  sectionOrder: ['summary', 'experience', 'education', 'certifications', 'skills'],
-};
+/**
+ * Factory for a brand-new, empty resume. Generates a fresh uuid and timestamps.
+ * Use this instead of spreading a shared default object so every resume gets a
+ * unique id and independent arrays.
+ */
+export function createEmptyResume(
+  name: string,
+  template: TemplateType = 'fshape',
+  now: string = new Date().toISOString()
+): Resume {
+  return {
+    id: uuidv4(),
+    name: name.trim() || 'Untitled Resume',
+    createdAt: now,
+    updatedAt: now,
+    contact: {
+      fullName: '',
+      email: '',
+      phone: '',
+      location: '',
+      website: '',
+      linkedin: '',
+    },
+    experience: [],
+    education: [],
+    certifications: [],
+    skills: [],
+    summary: '',
+    template,
+    sectionOrder: [...DEFAULT_SECTION_ORDER],
+  };
+}

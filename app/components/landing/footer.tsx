@@ -2,10 +2,10 @@
 
 import Link from 'next/link'
 import { Github, Linkedin, Mail, ExternalLink, Globe } from 'lucide-react'
+import { version } from '@/package.json'
 
 const Footer = () => {
   const currentYear = new Date().getFullYear()
-  const version = '0.1.0'
 
   const socialLinks = [
     {

@@ -1,8 +1,9 @@
 import React from "react"
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
-import './globals.css';
+import "./globals.css";
 import Footer from "./components/landing/footer";
+import ReduxProvider from "@/store/provider";
 
 
 const _geist = Geist({ subsets: ["latin"] });
@@ -39,8 +40,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`font-sans antialiased`}>
-        {children}
-        <Footer />
+        <ReduxProvider>
+          {children}
+          <Footer />
+        </ReduxProvider>
       </body>
     </html>
   )
