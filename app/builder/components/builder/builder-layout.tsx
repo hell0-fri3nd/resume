@@ -19,9 +19,9 @@ import {
   SelectItem, 
   SelectTrigger, 
   SelectValue 
-} from '../ui/select';
-import { Spinner } from '../ui/spinner';
-import { pdf } from '@react-pdf/renderer';
+} from '@/components/ui/select';
+import { Spinner } from '@/components/ui/spinner';
+
 
 interface BuilderLayoutProps {
   resume: Resume;

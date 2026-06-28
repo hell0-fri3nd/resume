@@ -3,7 +3,7 @@
 import { useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import TemplateShowcase from '@/components/landing/template-showcase';
+import TemplateShowcase from './components/landing/template-showcase';
 import { useRouter } from 'next/navigation';
 import Image from "next/image"
 
