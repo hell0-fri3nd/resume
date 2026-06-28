@@ -12,7 +12,7 @@ import {
   Edit 
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { exportResumeToPDF } from '@/lib/pdf-export';
+import { FShapePDFTemplate } from '@/lib/pdf-export';
 import { 
   Select, 
   SelectContent, 
@@ -37,7 +37,16 @@ export default function BuilderLayout({ resume, setResume }: BuilderLayoutProps)
     try {
       setIsExporting(true);
       await new Promise((resolve) => setTimeout(resolve, 100));
-      await exportResumeToPDF(resume);
+
+      const instance = pdf(<FShapePDFTemplate resume={resume} />);
+      const blob = await instance.toBlob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "resume.pdf";
+      a.click();
+      URL.revokeObjectURL(url);
+
     } catch (error) {
       console.error('[v0] Failed to export PDF:', error);
     } finally {
