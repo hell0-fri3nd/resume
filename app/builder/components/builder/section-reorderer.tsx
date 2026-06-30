@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { SectionType } from '@/lib/types';
+import { SectionId, SectionType, isBuiltinSection } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { GripVertical, X } from 'lucide-react';
@@ -27,10 +27,17 @@ const AVAILABLE_SECTIONS: SectionType[] = ['summary', 'experience', 'education',
 export default function SectionReorderer({ resumeId, isOpen, onClose }: SectionReordererProps) {
   const dispatch = useAppDispatch();
   const resume = useAppSelector((state) => selectResumeById(state, resumeId));
-  const [sections, setSections] = useState<SectionType[]>(resume?.sectionOrder ?? []);
-  const [draggedItem, setDraggedItem] = useState<SectionType | null>(null);
+  const [sections, setSections] = useState<SectionId[]>(resume?.sectionOrder ?? []);
+  const [draggedItem, setDraggedItem] = useState<SectionId | null>(null);
 
-  const handleDragStart = (section: SectionType) => {
+  // Resolve a section id (built-in or custom) to a display label.
+  const labelFor = (section: SectionId) => {
+    if (isBuiltinSection(section)) return SECTION_LABELS[section];
+    const custom = resume?.customSections?.find((s) => s.id === section);
+    return custom?.title.trim() || 'Untitled Section';
+  };
+
+  const handleDragStart = (section: SectionId) => {
     setDraggedItem(section);
   };
 
@@ -38,7 +45,7 @@ export default function SectionReorderer({ resumeId, isOpen, onClose }: SectionR
     e.preventDefault();
   };
 
-  const handleDrop = (targetSection: SectionType) => {
+  const handleDrop = (targetSection: SectionId) => {
     if (!draggedItem || draggedItem === targetSection) return;
 
     const draggedIndex = sections.indexOf(draggedItem);
@@ -95,7 +102,7 @@ export default function SectionReorderer({ resumeId, isOpen, onClose }: SectionR
                 className="flex items-center gap-3 p-3 bg-muted rounded-lg cursor-move hover:bg-muted/80 transition-colors border-2 border-transparent"
               >
                 <GripVertical size={18} className="text-muted-foreground flex-shrink-0" />
-                <span className="text-sm font-medium text-foreground flex-1">{SECTION_LABELS[section]}</span>
+                <span className="text-sm font-medium text-foreground flex-1">{labelFor(section)}</span>
               </div>
             ))}
           </div>

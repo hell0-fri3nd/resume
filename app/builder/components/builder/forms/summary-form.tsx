@@ -1,8 +1,8 @@
 'use client';
 
-import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
+import RichTextEditor from '@/components/custom/rich-text-editor';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectResumeById, setSummary } from '@/store/slices/resumes-slice';
 
@@ -30,11 +30,11 @@ export default function SummaryForm({ resumeId }: SummaryFormProps) {
           </p>
         </div>
 
-        <Textarea
+        <RichTextEditor
           placeholder="Write a brief summary about your professional experience, skills, and career goals..."
           value={resume.summary || ''}
-          onChange={(e) => handleChange(e.target.value)}
-          className="min-h-32 bg-background border-border resize-none"
+          onChange={(html) => handleChange(html)}
+          minHeight="min-h-32"
         />
 
         <p className="text-sm text-muted-foreground text-red-500 font-semibold">

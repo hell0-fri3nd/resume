@@ -9,6 +9,7 @@ import {
 
 import { Resume } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
+import { RichText } from "@/lib/rich-text-pdf";
 
 interface Props {
   resume: Resume;
@@ -183,7 +184,7 @@ export function FShapePDFTemplate({ resume }: Props) {
         {resume.summary && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>SUMMARY</Text>
-            <Text style={styles.small}>{resume.summary}</Text>
+            <RichText html={resume.summary} style={styles.small} />
           </View>
         )}
 
@@ -210,7 +211,7 @@ export function FShapePDFTemplate({ resume }: Props) {
                 </View>
 
                 {exp.description && (
-                  <Text style={styles.small}>{exp.description}</Text>
+                  <RichText html={exp.description} style={styles.small} />
                 )}
               </View>
             ))}
@@ -238,7 +239,7 @@ export function FShapePDFTemplate({ resume }: Props) {
                 </View>
 
                 {edu.details && (
-                  <Text style={styles.small}>{edu.details}</Text>
+                  <RichText html={edu.details} style={styles.small} />
                 )}
               </View>
             ))}
@@ -300,6 +301,40 @@ export function FShapePDFTemplate({ resume }: Props) {
               </View>
             ))}
           </View>
+        )}
+
+        {/* ================= CUSTOM SECTIONS ================= */}
+        {(resume.customSections ?? []).map((custom) =>
+          custom.items.length > 0 ? (
+            <View key={custom.id} style={styles.section}>
+              <Text style={styles.sectionTitle}>
+                {custom.title.toUpperCase()}
+              </Text>
+
+              {custom.items.map((item) => (
+                <View key={item.id} style={styles.row}>
+                  {(item.title || item.role || item.startDate || item.endDate) && (
+                    <View style={styles.flexBetween}>
+                      <View>
+                        {item.title && <Text style={styles.bold}>{item.title}</Text>}
+                        {item.role && <Text style={styles.italic}>{item.role}</Text>}
+                      </View>
+                      {(item.startDate || item.endDate) && (
+                        <Text style={styles.date}>
+                          {item.startDate ? formatDate(item.startDate) : ""}
+                          {item.startDate && item.endDate ? " – " : ""}
+                          {item.endDate ? formatDate(item.endDate) : ""}
+                        </Text>
+                      )}
+                    </View>
+                  )}
+                  {item.description && (
+                    <RichText html={item.description} style={styles.small} />
+                  )}
+                </View>
+              ))}
+            </View>
+          ) : null
         )}
 
       </Page>
@@ -437,7 +472,7 @@ export function HarvardPDFTemplate({ resume }: Props) {
       case "summary":
         return resume.summary ? (
           <HarvardSection key="summary" title="Professional Summary">
-            <Text style={harvardStyles.summaryText}>{resume.summary}</Text>
+            <RichText html={resume.summary} style={harvardStyles.summaryText} />
           </HarvardSection>
         ) : null;
 
@@ -456,7 +491,7 @@ export function HarvardPDFTemplate({ resume }: Props) {
                   <Text style={harvardStyles.entrySubtitle}>{exp.company}</Text>
                 )}
                 {exp.description && (
-                  <Text style={harvardStyles.entryDetail}>{exp.description}</Text>
+                  <RichText html={exp.description} style={harvardStyles.entryDetail} />
                 )}
               </View>
             ))}
@@ -483,7 +518,7 @@ export function HarvardPDFTemplate({ resume }: Props) {
                   <Text style={harvardStyles.entrySubtitle}>{edu.school}</Text>
                 )}
                 {edu.details && (
-                  <Text style={harvardStyles.entryDetail}>{edu.details}</Text>
+                  <RichText html={edu.details} style={harvardStyles.entryDetail} />
                 )}
               </View>
             ))}
@@ -528,8 +563,38 @@ export function HarvardPDFTemplate({ resume }: Props) {
           </HarvardSection>
         ) : null;
 
-      default:
-        return null;
+      default: {
+        const custom = resume.customSections?.find((s) => s.id === section);
+        if (!custom || custom.items.length === 0) return null;
+        return (
+          <HarvardSection key={custom.id} title={custom.title}>
+            {custom.items.map((item) => (
+              <View key={item.id} style={harvardStyles.entry}>
+                {(item.title || item.startDate || item.endDate) && (
+                  <View style={harvardStyles.entryHeader}>
+                    {item.title && (
+                      <Text style={harvardStyles.entryTitle}>{item.title}</Text>
+                    )}
+                    {(item.startDate || item.endDate) && (
+                      <Text style={harvardStyles.entryDate}>
+                        {item.startDate ? formatDate(item.startDate) : ""}
+                        {item.startDate && item.endDate ? " – " : ""}
+                        {item.endDate ? formatDate(item.endDate) : ""}
+                      </Text>
+                    )}
+                  </View>
+                )}
+                {item.role && (
+                  <Text style={harvardStyles.entrySubtitle}>{item.role}</Text>
+                )}
+                {item.description && (
+                  <RichText html={item.description} style={harvardStyles.entryDetail} />
+                )}
+              </View>
+            ))}
+          </HarvardSection>
+        );
+      }
     }
   };
 

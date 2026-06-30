@@ -53,6 +53,7 @@ function LegacyMigration() {
         education: parsed.education ?? [],
         certifications: parsed.certifications ?? [],
         skills: parsed.skills ?? [],
+        customSections: parsed.customSections ?? [],
         summary: parsed.summary ?? '',
         template: parsed.template === 'harvard' ? 'harvard' : 'fshape',
         sectionOrder: (parsed.sectionOrder as SectionType[]) ?? [

@@ -2,6 +2,7 @@ import { Resume } from '@/lib/types';
 import { formatDate } from '@/lib/utils';
 import Link from 'next/link';
 import { ReactNode } from 'react';
+import RichHtml from '@/components/custom/rich-html';
 
 interface FShapeTemplateProps {
   resume: Resume;
@@ -77,7 +78,7 @@ const FShapeTemplate = ({ resume }: FShapeTemplateProps) => {
           case 'summary':
             return resume.summary ? (
               <Container label='SUMMARY'>
-                <p className="text-[12px] whitespace-pre-wrap2">{resume.summary}</p>
+                <RichHtml html={resume.summary} className="text-[12px]" />
               </Container>
             ) : null;
 
@@ -97,7 +98,7 @@ const FShapeTemplate = ({ resume }: FShapeTemplateProps) => {
                         {exp.currentlyWorking && ' – Present'}
                       </span>
                     </div>
-                    {exp.description && <p className="text-[12px] whitespace-pre-wrap">{exp.description}</p>}
+                    {exp.description && <RichHtml html={exp.description} className="text-[12px]" />}
                   </div>
                 ))}
               </Container>
@@ -121,7 +122,7 @@ const FShapeTemplate = ({ resume }: FShapeTemplateProps) => {
                         <span className="text-[13.33px] whitespace-nowrap ml-4">{formatDate(edu.graduationDate)}</span>
                       )}
                     </div>
-                    {edu.details && <p className="text-[12px] whitespace-pre-wrap">{edu.details}</p>}
+                    {edu.details && <RichHtml html={edu.details} className="text-[12px]" />}
                   </div>
                 ))}
               </Container>
@@ -182,8 +183,38 @@ const FShapeTemplate = ({ resume }: FShapeTemplateProps) => {
               </Container> 
             ) : null;
 
-          default:
-            return null;
+          default: {
+            const custom = resume.customSections?.find((s) => s.id === section);
+            if (!custom || custom.items.length === 0) return null;
+            return (
+              <Container key={custom.id} label={custom.title.toUpperCase()}>
+                {custom.items.map((item) => (
+                  <div key={item.id} className="space-y-1">
+                    {(item.title || item.role || item.startDate || item.endDate) && (
+                      <div className="flex justify-between items-start">
+                        <div>
+                          {item.title && (
+                            <h3 className="text-[13.33px] font-bold text-black">{item.title}</h3>
+                          )}
+                          {item.role && <p className="text-[13.33px] italic">{item.role}</p>}
+                        </div>
+                        {(item.startDate || item.endDate) && (
+                          <span className="text-[13.33px] whitespace-nowrap ml-4">
+                            {item.startDate && formatDate(item.startDate)}
+                            {item.startDate && item.endDate && ' – '}
+                            {item.endDate && formatDate(item.endDate)}
+                          </span>
+                        )}
+                      </div>
+                    )}
+                    {item.description && (
+                      <RichHtml html={item.description} className="text-[12px]" />
+                    )}
+                  </div>
+                ))}
+              </Container>
+            );
+          }
         }
       })}
     </div>

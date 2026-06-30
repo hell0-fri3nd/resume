@@ -8,10 +8,12 @@ import {
   createEmptyResume,
   type Certification,
   type Contact,
+  type CustomSection,
+  type CustomSectionItem,
   type Education,
   type Experience,
   type Resume,
-  type SectionType,
+  type SectionId,
   type Skill,
   type TemplateType,
 } from '@/lib/types';
@@ -91,7 +93,7 @@ const resumesSlice = createSlice({
 
     reorderSections: (
       state,
-      action: PayloadAction<{ id: string; sectionOrder: SectionType[] }>
+      action: PayloadAction<{ id: string; sectionOrder: SectionId[] }>
     ) => {
       const resume = state.entities[action.payload.id];
       if (resume) {
@@ -312,6 +314,121 @@ const resumesSlice = createSlice({
         touch(resume);
       }
     },
+
+    // ---- Custom sections (user-named, e.g. Projects / Leadership) -----------
+    addCustomSection: {
+      reducer: (
+        state,
+        action: PayloadAction<{ id: string; section: CustomSection }>
+      ) => {
+        const resume = state.entities[action.payload.id];
+        if (resume) {
+          // Backfill for resumes persisted before custom sections existed.
+          resume.customSections ??= [];
+          resume.customSections.push(action.payload.section);
+          resume.sectionOrder.push(action.payload.section.id);
+          touch(resume);
+        }
+      },
+      // The section's id must be stable between customSections and sectionOrder,
+      // so generate it here rather than inside the reducer.
+      prepare: (input: { id: string; title?: string }) => ({
+        payload: {
+          id: input.id,
+          section: {
+            id: nanoid(),
+            title: input.title ?? '',
+            items: [] as CustomSectionItem[],
+          },
+        },
+      }),
+    },
+    updateCustomSection: (
+      state,
+      action: PayloadAction<{
+        id: string;
+        sectionId: string;
+        changes: Partial<Pick<CustomSection, 'title'>>;
+      }>
+    ) => {
+      const resume = state.entities[action.payload.id];
+      const section = resume?.customSections?.find(
+        (s) => s.id === action.payload.sectionId
+      );
+      if (resume && section) {
+        Object.assign(section, action.payload.changes);
+        touch(resume);
+      }
+    },
+    removeCustomSection: (
+      state,
+      action: PayloadAction<{ id: string; sectionId: string }>
+    ) => {
+      const resume = state.entities[action.payload.id];
+      if (resume) {
+        resume.customSections = (resume.customSections ?? []).filter(
+          (s) => s.id !== action.payload.sectionId
+        );
+        resume.sectionOrder = resume.sectionOrder.filter(
+          (s) => s !== action.payload.sectionId
+        );
+        touch(resume);
+      }
+    },
+    addCustomSectionItem: (
+      state,
+      action: PayloadAction<{ id: string; sectionId: string }>
+    ) => {
+      const resume = state.entities[action.payload.id];
+      const section = resume?.customSections?.find(
+        (s) => s.id === action.payload.sectionId
+      );
+      if (resume && section) {
+        section.items.push({
+          id: nanoid(),
+          title: '',
+          role: '',
+          startDate: '',
+          endDate: '',
+          description: '',
+        });
+        touch(resume);
+      }
+    },
+    updateCustomSectionItem: (
+      state,
+      action: PayloadAction<{
+        id: string;
+        sectionId: string;
+        itemId: string;
+        changes: Partial<CustomSectionItem>;
+      }>
+    ) => {
+      const resume = state.entities[action.payload.id];
+      const section = resume?.customSections?.find(
+        (s) => s.id === action.payload.sectionId
+      );
+      const item = section?.items.find((i) => i.id === action.payload.itemId);
+      if (resume && item) {
+        Object.assign(item, action.payload.changes);
+        touch(resume);
+      }
+    },
+    removeCustomSectionItem: (
+      state,
+      action: PayloadAction<{ id: string; sectionId: string; itemId: string }>
+    ) => {
+      const resume = state.entities[action.payload.id];
+      const section = resume?.customSections?.find(
+        (s) => s.id === action.payload.sectionId
+      );
+      if (resume && section) {
+        section.items = section.items.filter(
+          (i) => i.id !== action.payload.itemId
+        );
+        touch(resume);
+      }
+    },
   },
 });
 
@@ -339,6 +456,12 @@ export const {
   removeSkillGroup,
   addSkillToGroup,
   removeSkillFromGroup,
+  addCustomSection,
+  updateCustomSection,
+  removeCustomSection,
+  addCustomSectionItem,
+  updateCustomSectionItem,
+  removeCustomSectionItem,
 } = resumesSlice.actions;
 
 export const {

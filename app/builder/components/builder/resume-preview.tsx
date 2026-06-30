@@ -1,8 +1,18 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { Resume } from '@/lib/types';
-import FShapeTemplate from '../templates/fshape-template';
-import HarvardTemplate from '../templates/harvard-template';
+import { Spinner } from '@/components/ui/spinner';
+
+// react-pdf's PDFViewer touches browser-only APIs, so load it client-side only.
+const PdfPreview = dynamic(() => import('./pdf-preview'), {
+  ssr: false,
+  loading: () => (
+    <div className="flex items-center justify-center h-full w-full">
+      <Spinner />
+    </div>
+  ),
+});
 
 interface ResumePreviewProps {
   resume: Resume;
@@ -10,11 +20,11 @@ interface ResumePreviewProps {
 
 export default function ResumePreview({ resume }: ResumePreviewProps) {
   return (
-    <div className="p-6 lg:p-8 overflow-auto h-full">
-      <div id="resume-preview">
-        {resume.template === 'fshape' && <FShapeTemplate resume={resume} />}
-        {resume.template === 'harvard' && <HarvardTemplate resume={resume} />}
-      </div>
+    <div
+      id="resume-preview"
+      className="h-[calc(100vh-120px)] w-full"
+    >
+      <PdfPreview resume={resume} />
     </div>
   );
 }
