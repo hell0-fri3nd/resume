@@ -1,19 +1,21 @@
 'use client';
 
 import React, { useState } from 'react';
-import { SectionType } from '@/lib/types';
-import { useAppSelector } from '@/store/hooks';
-import { selectResumeById } from '@/store/slices/resumes-slice';
+import { SectionType, isBuiltinSection } from '@/lib/types';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { addCustomSection, selectResumeById } from '@/store/slices/resumes-slice';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { 
-  Settings, 
-  User, 
-  FileText, 
-  Briefcase, 
-  GraduationCap, 
-  Award, 
-  Code 
+import {
+  Settings,
+  User,
+  FileText,
+  Briefcase,
+  GraduationCap,
+  Award,
+  Code,
+  Plus,
+  LayoutList,
 } from 'lucide-react';
 import InformationForm from './forms/information-form';
 import SummaryForm from './forms/summary-form';
@@ -21,6 +23,7 @@ import ExperienceForm from './forms/experience-form';
 import EducationForm from './forms/education-form';
 import CertificationsForm from './forms/certifications-form';
 import SkillsForm from './forms/skills-form';
+import CustomSectionForm from './forms/custom-section-form';
 import SectionReorderer from './section-reorderer';
 
 // ============================================================================
@@ -79,30 +82,49 @@ const SECTION_ICONS = {
 
 
 export default function ResumeForm({ resumeId }: ResumeFormProps) {
+  const dispatch = useAppDispatch();
   const [showReorderer, setShowReorderer] = useState(false);
   const [activeTab, setActiveTab] = useState('contact');
   const resume = useAppSelector((state) => selectResumeById(state, resumeId));
 
   // Ensure sectionOrder exists
   const sectionOrder = resume?.sectionOrder || ['summary', 'education', 'experience', 'certifications', 'skills'];
+  const customSections = resume?.customSections ?? [];
+  const customSectionById = (id: string) => customSections.find((s) => s.id === id);
+
+  const handleAddCustomSection = () => {
+    const action = dispatch(addCustomSection({ id: resumeId }));
+    setActiveTab(action.payload.section.id);
+  };
 
   return (
     <div className="flex flex-col gap-6">
-      
+
       <div className="p-3 lg:p-8 m-3 space-y-4 flex items-center justify-between">
         <div className="space-y-2">
           <h1 className="text-3xl font-bold text-foreground ">Create Your Resume</h1>
           <p className="text-muted-foreground">Fill in your information section by section</p>
         </div>
-        <Button
-          onClick={() => setShowReorderer(true)}
-          variant="outline"
-          size="lg"
-          className="gap-2 border-border text-foreground hover:bg-muted"
-        >
-          <Settings size={16} />
-          <span className="hidden md:inline">Organize</span>
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            onClick={handleAddCustomSection}
+            variant="outline"
+            size="lg"
+            className="gap-2 border-border text-foreground hover:bg-muted"
+          >
+            <Plus size={16} />
+            <span className="hidden md:inline">Add Section</span>
+          </Button>
+          <Button
+            onClick={() => setShowReorderer(true)}
+            variant="outline"
+            size="lg"
+            className="gap-2 border-border text-foreground hover:bg-muted"
+          >
+            <Settings size={16} />
+            <span className="hidden md:inline">Organize</span>
+          </Button>
+        </div>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full  lg:p-8" orientation="vertical">
@@ -118,18 +140,30 @@ export default function ResumeForm({ resumeId }: ResumeFormProps) {
                 information
               </span>
             </TabsTrigger>
-            {sectionOrder.map((section) => (
-              <TabsTrigger 
-                key={section} 
-                value={section}
-                className="justify-start gap-2 px-4 py-3 text-sm font-medium rounded-lg hover:bg-muted"
-              >
-                {SECTION_CONFIG[section].icon}
-                <span className="hidden lg:inline">
-                  {SECTION_CONFIG[section].label}
-                </span>
-              </TabsTrigger>
-            ))}
+            {sectionOrder.map((section) => {
+              const isBuiltin = isBuiltinSection(section);
+              const custom = isBuiltin ? undefined : customSectionById(section);
+              // A custom id in sectionOrder with no matching section (stale) is skipped.
+              if (!isBuiltin && !custom) return null;
+              return (
+                <TabsTrigger
+                  key={section}
+                  value={section}
+                  className="justify-start gap-2 px-4 py-3 text-sm font-medium rounded-lg hover:bg-muted"
+                >
+                  {isBuiltin ? (
+                    SECTION_CONFIG[section as SectionType].icon
+                  ) : (
+                    <LayoutList className="w-5 h-5 md:w-6 md:h-6" />
+                  )}
+                  <span className="hidden lg:inline">
+                    {isBuiltin
+                      ? SECTION_CONFIG[section as SectionType].label
+                      : custom!.title.trim() || 'Untitled Section'}
+                  </span>
+                </TabsTrigger>
+              );
+            })}
           </TabsList>
         </div>
 
@@ -140,10 +174,18 @@ export default function ResumeForm({ resumeId }: ResumeFormProps) {
           </TabsContent>
 
           {sectionOrder.map((section) => {
-            const Component = SECTION_CONFIG[section].component;
+            if (isBuiltinSection(section)) {
+              const Component = SECTION_CONFIG[section].component;
+              return (
+                <TabsContent key={section} value={section}>
+                  <Component resumeId={resumeId} />
+                </TabsContent>
+              );
+            }
+            if (!customSectionById(section)) return null;
             return (
               <TabsContent key={section} value={section}>
-                <Component resumeId={resumeId} />
+                <CustomSectionForm resumeId={resumeId} sectionId={section} />
               </TabsContent>
             );
           })}

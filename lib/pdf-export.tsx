@@ -302,6 +302,40 @@ export function FShapePDFTemplate({ resume }: Props) {
           </View>
         )}
 
+        {/* ================= CUSTOM SECTIONS ================= */}
+        {(resume.customSections ?? []).map((custom) =>
+          custom.items.length > 0 ? (
+            <View key={custom.id} style={styles.section}>
+              <Text style={styles.sectionTitle}>
+                {custom.title.toUpperCase()}
+              </Text>
+
+              {custom.items.map((item) => (
+                <View key={item.id} style={styles.row}>
+                  {(item.title || item.role || item.startDate || item.endDate) && (
+                    <View style={styles.flexBetween}>
+                      <View>
+                        {item.title && <Text style={styles.bold}>{item.title}</Text>}
+                        {item.role && <Text style={styles.italic}>{item.role}</Text>}
+                      </View>
+                      {(item.startDate || item.endDate) && (
+                        <Text style={styles.date}>
+                          {item.startDate ? formatDate(item.startDate) : ""}
+                          {item.startDate && item.endDate ? " – " : ""}
+                          {item.endDate ? formatDate(item.endDate) : ""}
+                        </Text>
+                      )}
+                    </View>
+                  )}
+                  {item.description && (
+                    <Text style={styles.small}>{item.description}</Text>
+                  )}
+                </View>
+              ))}
+            </View>
+          ) : null
+        )}
+
       </Page>
     </Document>
   );
@@ -528,8 +562,38 @@ export function HarvardPDFTemplate({ resume }: Props) {
           </HarvardSection>
         ) : null;
 
-      default:
-        return null;
+      default: {
+        const custom = resume.customSections?.find((s) => s.id === section);
+        if (!custom || custom.items.length === 0) return null;
+        return (
+          <HarvardSection key={custom.id} title={custom.title}>
+            {custom.items.map((item) => (
+              <View key={item.id} style={harvardStyles.entry}>
+                {(item.title || item.startDate || item.endDate) && (
+                  <View style={harvardStyles.entryHeader}>
+                    {item.title && (
+                      <Text style={harvardStyles.entryTitle}>{item.title}</Text>
+                    )}
+                    {(item.startDate || item.endDate) && (
+                      <Text style={harvardStyles.entryDate}>
+                        {item.startDate ? formatDate(item.startDate) : ""}
+                        {item.startDate && item.endDate ? " – " : ""}
+                        {item.endDate ? formatDate(item.endDate) : ""}
+                      </Text>
+                    )}
+                  </View>
+                )}
+                {item.role && (
+                  <Text style={harvardStyles.entrySubtitle}>{item.role}</Text>
+                )}
+                {item.description && (
+                  <Text style={harvardStyles.entryDetail}>{item.description}</Text>
+                )}
+              </View>
+            ))}
+          </HarvardSection>
+        );
+      }
     }
   };
 

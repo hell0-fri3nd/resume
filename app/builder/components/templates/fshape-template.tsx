@@ -182,8 +182,38 @@ const FShapeTemplate = ({ resume }: FShapeTemplateProps) => {
               </Container> 
             ) : null;
 
-          default:
-            return null;
+          default: {
+            const custom = resume.customSections?.find((s) => s.id === section);
+            if (!custom || custom.items.length === 0) return null;
+            return (
+              <Container key={custom.id} label={custom.title.toUpperCase()}>
+                {custom.items.map((item) => (
+                  <div key={item.id} className="space-y-1">
+                    {(item.title || item.role || item.startDate || item.endDate) && (
+                      <div className="flex justify-between items-start">
+                        <div>
+                          {item.title && (
+                            <h3 className="text-[13.33px] font-bold text-black">{item.title}</h3>
+                          )}
+                          {item.role && <p className="text-[13.33px] italic">{item.role}</p>}
+                        </div>
+                        {(item.startDate || item.endDate) && (
+                          <span className="text-[13.33px] whitespace-nowrap ml-4">
+                            {item.startDate && formatDate(item.startDate)}
+                            {item.startDate && item.endDate && ' – '}
+                            {item.endDate && formatDate(item.endDate)}
+                          </span>
+                        )}
+                      </div>
+                    )}
+                    {item.description && (
+                      <p className="text-[12px] whitespace-pre-wrap">{item.description}</p>
+                    )}
+                  </div>
+                ))}
+              </Container>
+            );
+          }
         }
       })}
     </div>

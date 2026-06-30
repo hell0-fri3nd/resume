@@ -135,8 +135,41 @@ export default function HarvardTemplate({ resume }: HarvardTemplateProps) {
               </div>
             ) : null;
 
-          default:
-            return null;
+          default: {
+            const custom = resume.customSections?.find((s) => s.id === section);
+            if (!custom || custom.items.length === 0) return null;
+            return (
+              <div key={custom.id} className="mb-6">
+                <h2 className="text-sm font-bold text-black uppercase tracking-wide border-b-2 border-black pb-2 mb-3">
+                  {custom.title}
+                </h2>
+                <div className="space-y-3">
+                  {custom.items.map((item) => (
+                    <div key={item.id} className="space-y-1">
+                      {(item.title || item.startDate || item.endDate) && (
+                        <div className="flex justify-between items-baseline">
+                          {item.title && (
+                            <h3 className="text-sm font-bold text-black">{item.title}</h3>
+                          )}
+                          {(item.startDate || item.endDate) && (
+                            <span className="text-sm text-black ml-4">
+                              {item.startDate && formatDate(item.startDate)}
+                              {item.startDate && item.endDate && ' – '}
+                              {item.endDate && formatDate(item.endDate)}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                      {item.role && <p className="text-sm italic text-black">{item.role}</p>}
+                      {item.description && (
+                        <p className="text-sm whitespace-pre-wrap leading-relaxed">{item.description}</p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          }
         }
       })}
     </div>
