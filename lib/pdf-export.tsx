@@ -9,6 +9,7 @@ import {
 
 import { Resume } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
+import { RichText } from "@/lib/rich-text-pdf";
 
 interface Props {
   resume: Resume;
@@ -183,7 +184,7 @@ export function FShapePDFTemplate({ resume }: Props) {
         {resume.summary && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>SUMMARY</Text>
-            <Text style={styles.small}>{resume.summary}</Text>
+            <RichText html={resume.summary} style={styles.small} />
           </View>
         )}
 
@@ -210,7 +211,7 @@ export function FShapePDFTemplate({ resume }: Props) {
                 </View>
 
                 {exp.description && (
-                  <Text style={styles.small}>{exp.description}</Text>
+                  <RichText html={exp.description} style={styles.small} />
                 )}
               </View>
             ))}
@@ -238,7 +239,7 @@ export function FShapePDFTemplate({ resume }: Props) {
                 </View>
 
                 {edu.details && (
-                  <Text style={styles.small}>{edu.details}</Text>
+                  <RichText html={edu.details} style={styles.small} />
                 )}
               </View>
             ))}
@@ -328,7 +329,7 @@ export function FShapePDFTemplate({ resume }: Props) {
                     </View>
                   )}
                   {item.description && (
-                    <Text style={styles.small}>{item.description}</Text>
+                    <RichText html={item.description} style={styles.small} />
                   )}
                 </View>
               ))}
@@ -471,7 +472,7 @@ export function HarvardPDFTemplate({ resume }: Props) {
       case "summary":
         return resume.summary ? (
           <HarvardSection key="summary" title="Professional Summary">
-            <Text style={harvardStyles.summaryText}>{resume.summary}</Text>
+            <RichText html={resume.summary} style={harvardStyles.summaryText} />
           </HarvardSection>
         ) : null;
 
@@ -490,7 +491,7 @@ export function HarvardPDFTemplate({ resume }: Props) {
                   <Text style={harvardStyles.entrySubtitle}>{exp.company}</Text>
                 )}
                 {exp.description && (
-                  <Text style={harvardStyles.entryDetail}>{exp.description}</Text>
+                  <RichText html={exp.description} style={harvardStyles.entryDetail} />
                 )}
               </View>
             ))}
@@ -517,7 +518,7 @@ export function HarvardPDFTemplate({ resume }: Props) {
                   <Text style={harvardStyles.entrySubtitle}>{edu.school}</Text>
                 )}
                 {edu.details && (
-                  <Text style={harvardStyles.entryDetail}>{edu.details}</Text>
+                  <RichText html={edu.details} style={harvardStyles.entryDetail} />
                 )}
               </View>
             ))}
@@ -587,7 +588,7 @@ export function HarvardPDFTemplate({ resume }: Props) {
                   <Text style={harvardStyles.entrySubtitle}>{item.role}</Text>
                 )}
                 {item.description && (
-                  <Text style={harvardStyles.entryDetail}>{item.description}</Text>
+                  <RichText html={item.description} style={harvardStyles.entryDetail} />
                 )}
               </View>
             ))}

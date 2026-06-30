@@ -1,5 +1,6 @@
 import { Resume } from '@/lib/types';
 import { formatDate } from '@/lib/utils';
+import RichHtml from '@/components/custom/rich-html';
 
 interface HarvardTemplateProps {
   resume: Resume;
@@ -37,7 +38,7 @@ export default function HarvardTemplate({ resume }: HarvardTemplateProps) {
                 <h2 className="text-sm font-bold text-black uppercase tracking-wide border-b-2 border-black pb-2 mb-3">
                   Professional Summary
                 </h2>
-                <p className="text-sm leading-relaxed whitespace-pre-wrap">{resume.summary}</p>
+                <RichHtml html={resume.summary} className="text-sm leading-relaxed" />
               </div>
             ) : null;
 
@@ -60,7 +61,7 @@ export default function HarvardTemplate({ resume }: HarvardTemplateProps) {
                       </div>
                       <p className="text-sm italic text-black">{exp.company}</p>
                       {exp.description && (
-                        <p className="text-sm whitespace-pre-wrap leading-relaxed">{exp.description}</p>
+                        <RichHtml html={exp.description} className="text-sm leading-relaxed" />
                       )}
                     </div>
                   ))}
@@ -87,7 +88,7 @@ export default function HarvardTemplate({ resume }: HarvardTemplateProps) {
                       </div>
                       <p className="text-sm italic text-black">{edu.school}</p>
                       {edu.details && (
-                        <p className="text-sm whitespace-pre-wrap leading-relaxed">{edu.details}</p>
+                        <RichHtml html={edu.details} className="text-sm leading-relaxed" />
                       )}
                     </div>
                   ))}
@@ -162,7 +163,7 @@ export default function HarvardTemplate({ resume }: HarvardTemplateProps) {
                       )}
                       {item.role && <p className="text-sm italic text-black">{item.role}</p>}
                       {item.description && (
-                        <p className="text-sm whitespace-pre-wrap leading-relaxed">{item.description}</p>
+                        <RichHtml html={item.description} className="text-sm leading-relaxed" />
                       )}
                     </div>
                   ))}

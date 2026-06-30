@@ -4,8 +4,8 @@ import { Experience } from '@/lib/types';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
+import RichTextEditor from '@/components/custom/rich-text-editor';
 import { Trash2, Plus, Lightbulb, Zap, TrendingUp } from 'lucide-react';
 import CardHeaderForm from '@/components/custom/card-header-form';
 import InputField from '@/components/custom/input-field';
@@ -129,13 +129,11 @@ export default function ExperienceForm({ resumeId }: ExperienceFormProps) {
 
             <div className="space-y-2">
               <Label className="text-foreground font-semibold">Description</Label>
-              <Textarea
-              placeholder="* Deployed a full-stack web application and reduced development timelines by 50% (12 → 6 months) across two
-              municipal LGU systems by developing new features, modularized customizations, refactored legacy code, and
-              resolved critical defects using CodeIgniter 3, jQuery & Bootstrap and MySQL. "
+              <RichTextEditor
+              placeholder="* Deployed a full-stack web application and reduced development timelines by 50% (12 → 6 months) by developing new features, refactoring legacy code, and resolving critical defects."
               value={exp.description}
-              onChange={(e) => handleUpdateExperience(exp.id, 'description', e.target.value)}
-              className="min-h-24 bg-background border-border resize-none"
+              onChange={(html) => handleUpdateExperience(exp.id, 'description', html)}
+              minHeight="min-h-24"
               />
 
               <div className="flex items-start gap-2">

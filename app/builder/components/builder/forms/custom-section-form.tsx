@@ -4,8 +4,8 @@ import { CustomSectionItem } from '@/lib/types';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
 import { Trash2, Plus } from 'lucide-react';
+import RichTextEditor from '@/components/custom/rich-text-editor';
 import CardHeaderForm from '@/components/custom/card-header-form';
 import InputField from '@/components/custom/input-field';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
@@ -145,11 +145,11 @@ export default function CustomSectionForm({ resumeId, sectionId }: CustomSection
 
             <div className="space-y-2">
               <Label className="text-foreground font-semibold">Description</Label>
-              <Textarea
+              <RichTextEditor
                 placeholder="Describe this entry. Use bullet points and measurable results where possible."
                 value={item.description}
-                onChange={(e) => handleUpdateItem(item.id, 'description', e.target.value)}
-                className="min-h-24 bg-background border-border resize-none"
+                onChange={(html) => handleUpdateItem(item.id, 'description', html)}
+                minHeight="min-h-24"
               />
             </div>
           </div>

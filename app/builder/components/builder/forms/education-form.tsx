@@ -4,8 +4,8 @@ import { Education } from '@/lib/types';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
 import { Trash2, Plus, Lightbulb } from 'lucide-react';
+import RichTextEditor from '@/components/custom/rich-text-editor';
 import CardHeaderForm from '@/components/custom/card-header-form';
 import InputField from '@/components/custom/input-field';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
@@ -112,11 +112,11 @@ export default function EducationForm({ resumeId }: EducationFormProps) {
 
             <div className="space-y-2">
               <Label className="text-foreground font-semibold">Additional Details</Label>
-              <Textarea
-                placeholder="e.g., Developed a full-stack IoT Smart Locker System with facial recognition, enabling secure, keyless access and real-time usage tracking, including a blinking-based liveness check to verify users."
+              <RichTextEditor
+                placeholder="e.g., Developed a full-stack IoT Smart Locker System with facial recognition, enabling secure, keyless access and real-time usage tracking."
                 value={edu.details || ''}
-                onChange={(e) => handleUpdateEducation(edu.id, 'details', e.target.value)}
-                className="min-h-20 bg-background border-border resize-none"
+                onChange={(html) => handleUpdateEducation(edu.id, 'details', html)}
+                minHeight="min-h-20"
               />
 
               <div className="flex items-start gap-2">
