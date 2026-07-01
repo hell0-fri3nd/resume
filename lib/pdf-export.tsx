@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
   },
 
   section: {
-    marginTop: 6,
+    marginTop: 3,
   },
 
   sectionTitle: {
