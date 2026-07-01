@@ -29,8 +29,8 @@ const styles = StyleSheet.create({
   header: {
     borderBottomWidth: 2,
     borderBottomColor: "#1a1a1a",
-    paddingBottom: 10,
-    marginBottom: 12,
+    paddingBottom: 4,
+    marginBottom: 6,
   },
 
   name: {
@@ -39,10 +39,15 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
 
+  contactColumn: {
+    flexDirection: "column",
+    flexWrap: "wrap",
+    marginTop: 12
+  },
+
   contactRow: {
     flexDirection: "row",
     flexWrap: "wrap",
-    marginTop: 6,
     fontSize: 9.5,
     color: "#333",
   },
@@ -53,7 +58,7 @@ const styles = StyleSheet.create({
   },
 
   section: {
-    marginTop: 12,
+    marginTop: 6,
   },
 
   sectionTitle: {
@@ -62,13 +67,13 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#999",
     paddingBottom: 3,
-    marginBottom: 7,
+    marginBottom: 5,
     textTransform: "uppercase",
     letterSpacing: 1,
   },
 
   row: {
-    marginBottom: 9,
+    marginBottom: 3,
   },
 
   flexBetween: {
@@ -131,53 +136,56 @@ export function FShapePDFTemplate({ resume }: Props) {
             {resume.contact.fullName}
           </Text>
 
-          <View style={styles.contactRow}>
-            {resume.contact.email && <Text>{resume.contact.email}</Text>}
-            {resume.contact.phone && (
-              <>
+          <View style={styles.contactColumn}>
+            <View style={styles.contactRow}>
+              {resume.contact.email && <Text>{resume.contact.email}</Text>}
+              {resume.contact.phone && (
+                <>
+                  <Text style={styles.dot}>•</Text>
+                  <Text>{resume.contact.phone}</Text>
+                </>
+              )}
+              {resume.contact.location && (
+                <>
+                  <Text style={styles.dot}>•</Text>
+                  <Text>{resume.contact.location}</Text>
+                </>
+              )}
+            </View>
+
+            <View style={styles.contactRow}>
+              {resume.contact.linkedin && (
+                <Link
+                  src={
+                    resume.contact.linkedin.startsWith("http")
+                      ? resume.contact.linkedin
+                      : `https://${resume.contact.linkedin}`
+                  }
+                  style={styles.link}
+                >
+                  {resume.contact.linkedin}
+                </Link>
+              )}
+
+              {resume.contact.website && resume.contact.linkedin && (
                 <Text style={styles.dot}>•</Text>
-                <Text>{resume.contact.phone}</Text>
-              </>
-            )}
-            {resume.contact.location && (
-              <>
-                <Text style={styles.dot}>•</Text>
-                <Text>{resume.contact.location}</Text>
-              </>
-            )}
+              )}
+
+              {resume.contact.website && (
+                <Link
+                  src={
+                    resume.contact.website.startsWith("http")
+                      ? resume.contact.website
+                      : `https://${resume.contact.website}`
+                  }
+                  style={styles.link}
+                >
+                  {resume.contact.website}
+                </Link>
+              )}
+            </View>
           </View>
 
-          <View style={styles.contactRow}>
-            {resume.contact.linkedin && (
-              <Link
-                src={
-                  resume.contact.linkedin.startsWith("http")
-                    ? resume.contact.linkedin
-                    : `https://${resume.contact.linkedin}`
-                }
-                style={styles.link}
-              >
-                {resume.contact.linkedin}
-              </Link>
-            )}
-
-            {resume.contact.website && resume.contact.linkedin && (
-              <Text style={styles.dot}>•</Text>
-            )}
-
-            {resume.contact.website && (
-              <Link
-                src={
-                  resume.contact.website.startsWith("http")
-                    ? resume.contact.website
-                    : `https://${resume.contact.website}`
-                }
-                style={styles.link}
-              >
-                {resume.contact.website}
-              </Link>
-            )}
-          </View>
         </View>
 
         {/* ================= SUMMARY ================= */}
@@ -354,7 +362,7 @@ const harvardStyles = StyleSheet.create({
   },
 
   header: {
-    marginBottom: 16,
+    marginBottom: 0,
   },
 
   name: {
@@ -377,7 +385,7 @@ const harvardStyles = StyleSheet.create({
   },
 
   section: {
-    marginBottom: 14,
+    marginBottom: 3,
   },
 
   sectionTitle: {
