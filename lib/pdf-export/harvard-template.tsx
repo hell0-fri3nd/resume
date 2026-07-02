@@ -142,6 +142,12 @@ function HarvardSection({ title, children }: { title: string; children: React.Re
 }
 
 export function HarvardPDFTemplate({ resume }: Props) {
+  const formatLinkUrl = (url?: string) => {
+    const trimmedUrl = url?.trim();
+    if (!trimmedUrl) return "";
+    return trimmedUrl.startsWith("http") ? trimmedUrl : `https://${trimmedUrl}`;
+  };
+
   const formatRange = (start?: string, end?: string, current?: boolean) => {
     const startStr = start ? formatDate(start) : "";
     if (current) return `${startStr} – Present`;
@@ -161,7 +167,7 @@ export function HarvardPDFTemplate({ resume }: Props) {
 
       case "experience":
         return resume.experience.length > 0 ? (
-          <HarvardSection key="experience" title="Professional Experience">
+          <HarvardSection key="experience" title="Experience">
             {resume.experience.map((exp) => (
               <View key={exp.id} style={harvardStyles.entry}>
                 <View style={harvardStyles.entryHeader}>
@@ -211,26 +217,39 @@ export function HarvardPDFTemplate({ resume }: Props) {
       case "certifications":
         return resume.certifications.length > 0 ? (
           <HarvardSection key="certifications" title="Certifications & Licenses">
-            {resume.certifications.map((cert) => (
-              <View key={cert.id} style={harvardStyles.entry}>
-                <View style={harvardStyles.entryHeader}>
-                  <Text style={harvardStyles.entryTitle}>{cert.title}</Text>
-                  {cert.issueDate && (
-                    <Text style={harvardStyles.entryDate}>
-                      {formatDate(cert.issueDate)}
+            {resume.certifications.map((cert) => {
+              const credentialUrl = formatLinkUrl(cert.credentialUrl);
+
+              return (
+                <View key={cert.id} style={harvardStyles.entry}>
+                  <View style={harvardStyles.entryHeader}>
+                    {cert.title && credentialUrl ? (
+                      <Link
+                        src={credentialUrl}
+                        style={[harvardStyles.entryTitle, harvardStyles.link]}
+                      >
+                        {cert.title}
+                      </Link>
+                    ) : (
+                      <Text style={harvardStyles.entryTitle}>{cert.title}</Text>
+                    )}
+                    {cert.issueDate && (
+                      <Text style={harvardStyles.entryDate}>
+                        {formatDate(cert.issueDate)}
+                      </Text>
+                    )}
+                  </View>
+                  {cert.issuer && (
+                    <Text style={harvardStyles.entrySubtitle}>{cert.issuer}</Text>
+                  )}
+                  {cert.credentialId && (
+                    <Text style={harvardStyles.entryDetail}>
+                      ID: {cert.credentialId}
                     </Text>
                   )}
                 </View>
-                {cert.issuer && (
-                  <Text style={harvardStyles.entrySubtitle}>{cert.issuer}</Text>
-                )}
-                {cert.credentialId && (
-                  <Text style={harvardStyles.entryDetail}>
-                    ID: {cert.credentialId}
-                  </Text>
-                )}
-              </View>
-            ))}
+              );
+            })}
           </HarvardSection>
         ) : null;
 

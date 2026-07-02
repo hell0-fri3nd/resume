@@ -125,9 +125,177 @@ const styles = StyleSheet.create({
   },
 });
 
+
+
+const FShapeSection = ({ title, children }: { title: string; children: React.ReactNode }) => {
+  return (
+    <View style={styles.section}>
+      <Text style={styles.sectionTitle}>{title}</Text>
+      {children}
+    </View>
+  )
+}
 /* ---------------- COMPONENT ---------------- */
 
 export function FShapePDFTemplate({ resume }: Props) {
+  const formatLinkUrl = (url?: string) => {
+    const trimmedUrl = url?.trim();
+    if (!trimmedUrl) return "";
+    return trimmedUrl.startsWith("http") ? trimmedUrl : `https://${trimmedUrl}`;
+  };
+
+  const renderSection = (section: string) => {
+    switch (section) {
+        case "summary":
+          return resume.summary ? (
+            <FShapeSection key="summary" title="Professional Summary">
+              <RichText html={resume.summary} style={styles.small} />
+            </FShapeSection>
+          ) : null;
+      
+          case "experience":
+            return resume.experience.length > 0 ? (
+              <FShapeSection key="experience" title="Experience">
+                {resume.experience.map((exp) => (
+                  <View key={exp.id} style={styles.row}>
+                    <View style={styles.flexBetween}>
+                      <View>
+                        <Text style={styles.bold}>{exp.jobTitle}</Text>
+                        <Text style={styles.italic}>{exp.company}</Text>
+                      </View>
+
+                      <Text style={styles.date}>
+                        {exp.startDate && formatDate(exp.startDate)}
+                        {exp.endDate && !exp.currentlyWorking
+                          ? ` – ${formatDate(exp.endDate)}`
+                          : ""}
+                        {exp.currentlyWorking ? " – Present" : ""}
+                      </Text>
+                    </View>
+
+                    {exp.description && (
+                      <RichText html={exp.description} style={styles.small} />
+                    )}
+                  </View>
+                ))}
+
+              </FShapeSection>
+            ) : null;
+      
+          case "education":
+            return resume.education.length > 0 ? (
+              <FShapeSection key="education" title="Education">
+                {resume.education.map((edu) => (
+                  <View key={edu.id} style={styles.row}>
+                    <View style={styles.flexBetween}>
+                      <View>
+                        <Text style={styles.bold}>
+                          {edu.degree} in {edu.field}
+                        </Text>
+                        <Text style={styles.italic}>{edu.school}</Text>
+                      </View>
+
+                      {edu.graduationDate && (
+                        <Text style={styles.date}>{formatDate(edu.graduationDate)}</Text>
+                      )}
+                    </View>
+
+                    {edu.details && (
+                      <RichText html={edu.details} style={styles.small} />
+                    )}
+                  </View>
+                  ))}
+              </FShapeSection>
+            ) : null;
+      
+            case "certifications":
+              return resume.certifications.length > 0 ? (
+                <FShapeSection key="certifications" title="Certifications & Licenses">
+                  {resume.certifications.map((cert) => {
+                    const credentialUrl = formatLinkUrl(cert.credentialUrl);
+
+                    return (
+                      <View key={cert.id} style={styles.flexBetween}>
+                        <View>
+                          {cert.title && credentialUrl ? (
+                            <Link
+                              src={credentialUrl}
+                              style={[styles.bold, styles.link]}
+                            >
+                              {cert.title}
+                            </Link>
+                          ) : (
+                            cert.title && <Text style={styles.bold}>{cert.title}</Text>
+                          )}
+
+                          {cert.issuer && (
+                            <Text style={styles.small}>{cert.issuer}</Text>
+                          )}
+                        </View>
+
+                        <View>
+                          {cert.issueDate && (
+                            <Text style={styles.date}>{formatDate(cert.issueDate)}</Text>
+                          )}
+                          {cert.credentialId && (
+                            <Text style={styles.small}>
+                              ID: {cert.credentialId}
+                            </Text>
+                          )}
+                        </View>
+                      </View>
+                    );
+                  })}
+                </FShapeSection>
+              ) : null;
+      
+            case "skills":
+              return resume.skills.length > 0 ? (
+                <FShapeSection key="skills" title="Skills">
+                  {resume.skills.map((group) => (
+                    <View key={group.id} style={styles.skillRow}>
+                      <Text style={styles.skillLabel}>
+                        {group.category}:
+                      </Text>
+                      <Text>{group.skills.join(", ")}</Text>
+                    </View>
+                  ))}
+                </FShapeSection>
+              ) : null;
+      
+            default: {
+              const custom = resume.customSections?.find((s) => s.id === section);
+              if (!custom || custom.items.length === 0) return null;
+              return (
+                <FShapeSection key={custom.id} title={custom.title}>
+                  {custom.items.map((item) => (
+                                  <View key={item.id} style={styles.row}>
+                  {(item.title || item.role || item.startDate || item.endDate) && (
+                    <View style={styles.flexBetween}>
+                      <View>
+                        {item.title && <Text style={styles.bold}>{item.title}</Text>}
+                        {item.role && <Text style={styles.italic}>{item.role}</Text>}
+                      </View>
+                      {(item.startDate || item.endDate) && (
+                        <Text style={styles.date}>
+                          {item.startDate ? formatDate(item.startDate) : ""}
+                          {item.startDate && item.endDate ? " – " : ""}
+                          {item.endDate ? formatDate(item.endDate) : ""}
+                        </Text>
+                      )}
+                    </View>
+                  )}
+                  {item.description && (
+                    <RichText html={item.description} style={styles.small} />
+                  )}
+                </View>
+                  ))}
+                </FShapeSection>
+              );
+    }
+    }
+  }
+
   return (
     <Document>
       <Page size="A4" style={styles.page}>
@@ -190,162 +358,8 @@ export function FShapePDFTemplate({ resume }: Props) {
 
         </View>
 
-        {/* ================= SUMMARY ================= */}
-        {resume.summary && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>SUMMARY</Text>
-            <RichText html={resume.summary} style={styles.small} />
-          </View>
-        )}
-
-        {/* ================= EXPERIENCE ================= */}
-        {resume.experience.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>EXPERIENCE</Text>
-
-            {resume.experience.map((exp) => (
-              <View key={exp.id} style={styles.row}>
-                <View style={styles.flexBetween}>
-                  <View>
-                    <Text style={styles.bold}>{exp.jobTitle}</Text>
-                    <Text style={styles.italic}>{exp.company}</Text>
-                  </View>
-
-                  <Text style={styles.date}>
-                    {exp.startDate && formatDate(exp.startDate)}
-                    {exp.endDate && !exp.currentlyWorking
-                      ? ` – ${formatDate(exp.endDate)}`
-                      : ""}
-                    {exp.currentlyWorking ? " – Present" : ""}
-                  </Text>
-                </View>
-
-                {exp.description && (
-                  <RichText html={exp.description} style={styles.small} />
-                )}
-              </View>
-            ))}
-          </View>
-        )}
-
-        {/* ================= EDUCATION ================= */}
-        {resume.education.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>EDUCATION</Text>
-
-            {resume.education.map((edu) => (
-              <View key={edu.id} style={styles.row}>
-                <View style={styles.flexBetween}>
-                  <View>
-                    <Text style={styles.bold}>
-                      {edu.degree} in {edu.field}
-                    </Text>
-                    <Text style={styles.italic}>{edu.school}</Text>
-                  </View>
-
-                  {edu.graduationDate && (
-                    <Text style={styles.date}>{formatDate(edu.graduationDate)}</Text>
-                  )}
-                </View>
-
-                {edu.details && (
-                  <RichText html={edu.details} style={styles.small} />
-                )}
-              </View>
-            ))}
-          </View>
-        )}
-
-        {/* ================= CERTIFICATIONS ================= */}
-        {resume.certifications.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>CERTIFICATIONS</Text>
-
-            {resume.certifications.map((cert) => (
-              <View key={cert.id} style={styles.flexBetween}>
-                <View>
-                  {cert.title && (
-                    <Link
-                      src={
-                        cert.title.startsWith("http")
-                          ? cert.title
-                          : `https://${cert.title}`
-                      }
-                      style={[styles.bold, styles.link]}
-                    >
-                      {cert.title}
-                    </Link>
-                  )}
-
-                  {cert.issuer && (
-                    <Text style={styles.small}>{cert.issuer}</Text>
-                  )}
-                </View>
-
-                <View>
-                  {cert.issueDate && (
-                    <Text style={styles.date}>{formatDate(cert.issueDate)}</Text>
-                  )}
-                  {cert.credentialId && (
-                    <Text style={styles.small}>
-                      ID: {cert.credentialId}
-                    </Text>
-                  )}
-                </View>
-              </View>
-            ))}
-          </View>
-        )}
-
-        {/* ================= SKILLS ================= */}
-        {resume.skills.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>SKILLS</Text>
-
-            {resume.skills.map((group) => (
-              <View key={group.id} style={styles.skillRow}>
-                <Text style={styles.skillLabel}>
-                  {group.category}:
-                </Text>
-                <Text>{group.skills.join(", ")}</Text>
-              </View>
-            ))}
-          </View>
-        )}
-
-        {/* ================= CUSTOM SECTIONS ================= */}
-        {(resume.customSections ?? []).map((custom) =>
-          custom.items.length > 0 ? (
-            <View key={custom.id} style={styles.section}>
-              <Text style={styles.sectionTitle}>
-                {custom.title.toUpperCase()}
-              </Text>
-
-              {custom.items.map((item) => (
-                <View key={item.id} style={styles.row}>
-                  {(item.title || item.role || item.startDate || item.endDate) && (
-                    <View style={styles.flexBetween}>
-                      <View>
-                        {item.title && <Text style={styles.bold}>{item.title}</Text>}
-                        {item.role && <Text style={styles.italic}>{item.role}</Text>}
-                      </View>
-                      {(item.startDate || item.endDate) && (
-                        <Text style={styles.date}>
-                          {item.startDate ? formatDate(item.startDate) : ""}
-                          {item.startDate && item.endDate ? " – " : ""}
-                          {item.endDate ? formatDate(item.endDate) : ""}
-                        </Text>
-                      )}
-                    </View>
-                  )}
-                  {item.description && (
-                    <RichText html={item.description} style={styles.small} />
-                  )}
-                </View>
-              ))}
-            </View>
-          ) : null
-        )}
+        {/* ================= DYNAMIC SECTIONS ================= */}
+        {resume.sectionOrder.map((section) => renderSection(section))}
 
       </Page>
     </Document>
