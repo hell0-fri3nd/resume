@@ -13,7 +13,8 @@ import {
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { useRouter } from 'next/navigation';
-import { FShapePDFTemplate, HarvardPDFTemplate } from '@/lib/pdf-export';
+import { FShapePDFTemplate } from '@/lib/pdf-export/f-shape-template';
+import { HarvardPDFTemplate } from '@/lib/pdf-export/harvard-template';
 import {
   Select,
   SelectContent,
