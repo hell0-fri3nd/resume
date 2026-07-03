@@ -4,7 +4,7 @@ A production-ready resume builder built with Next.js. The app helps users create
 
 ## Live Demo
 
-Vercel deployment: [https://resume-builder-demo.vercel.app](https://resume-builder-demo.vercel.app)
+Vercel deployment: [https://resume-azure-xi.vercel.app](https://resume-azure-xi.vercel.app)
 
 > Temporary placeholder link. Replace this URL after the real Vercel deployment is available.
 

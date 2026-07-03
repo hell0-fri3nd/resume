@@ -1,22 +1,17 @@
-// Prisma is the data layer for synced resumes. Auth stays with Supabase
-// (Google OAuth) — this schema only owns the `resumes` table.
-//
-// Run against your Supabase Postgres:
-//   npx prisma generate      # after install / schema changes
-//   npx prisma db push       # create/update the table
-// Then apply supabase/rls-policies.sql for Row Level Security.
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
-  // Pooled connection (PgBouncer) for the app at runtime.
-  url      = env("DATABASE_URL")
-  // Direct connection for migrations / db push.
-  directUrl = env("DIRECT_URL")
 }
+
 
 /// User profile captured during onboarding. Keyed 1:1 on the Supabase auth
 /// user. `onboardedAt` being non-null marks onboarding as complete — until then

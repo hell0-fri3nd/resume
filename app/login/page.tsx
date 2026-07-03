@@ -86,7 +86,7 @@ function LoginContent() {
               </code>{' '}
               and{' '}
               <code className="rounded bg-muted px-1 py-0.5">
-                NEXT_PUBLIC_SUPABASE_ANON_KEY
+                NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
               </code>
               .
             </p>
