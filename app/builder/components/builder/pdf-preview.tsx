@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react';
 import { PDFViewer } from '@react-pdf/renderer';
 import { Resume } from '@/lib/types';
-import { FShapePDFTemplate, HarvardPDFTemplate } from '@/lib/pdf-export';
+import { FShapePDFTemplate } from '@/lib/pdf-export/f-shape-template';
+import { HarvardPDFTemplate } from '@/lib/pdf-export/harvard-template';
 
 interface PdfPreviewProps {
   resume: Resume;
