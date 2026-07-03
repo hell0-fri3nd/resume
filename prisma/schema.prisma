@@ -1,0 +1,48 @@
+// Prisma is the data layer for synced resumes. Auth stays with Supabase
+// (Google OAuth) — this schema only owns the `resumes` table.
+//
+// Run against your Supabase Postgres:
+//   npx prisma generate      # after install / schema changes
+//   npx prisma db push       # create/update the table
+// Then apply supabase/rls-policies.sql for Row Level Security.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  // Pooled connection (PgBouncer) for the app at runtime.
+  url      = env("DATABASE_URL")
+  // Direct connection for migrations / db push.
+  directUrl = env("DIRECT_URL")
+}
+
+/// User profile captured during onboarding. Keyed 1:1 on the Supabase auth
+/// user. `onboardedAt` being non-null marks onboarding as complete — until then
+/// the app routes the user to /onboarding.
+model Profile {
+  userId      String    @id @map("user_id") @db.Uuid
+  fullName    String    @map("full_name")
+  onboardedAt DateTime? @map("onboarded_at") @db.Timestamptz(6)
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@map("profiles")
+}
+
+/// One synced resume per row. The full resume object lives in `data`; the
+/// scalar columns mirror it for ownership checks and ordering.
+model Resume {
+  id        String   @id @db.Uuid
+  /// Supabase auth.users.id — not a Prisma relation (auth schema is managed by
+  /// Supabase). The FK constraint is added in supabase/rls-policies.sql.
+  userId    String   @map("user_id") @db.Uuid
+  name      String   @default("Untitled Resume")
+  data      Json
+  updatedAt DateTime @map("updated_at") @db.Timestamptz(6)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@index([userId])
+  @@map("resumes")
+}

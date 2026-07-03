@@ -4,6 +4,8 @@ import { Geist, Geist_Mono } from 'next/font/google'
 import "./globals.css";
 import Footer from "./components/landing/footer";
 import ReduxProvider from "@/store/provider";
+import { AuthProvider } from "@/components/auth/auth-provider";
+import { Toaster } from "@/components/ui/sonner";
 
 
 const _geist = Geist({ subsets: ["latin"] });
@@ -40,10 +42,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`font-sans antialiased`}>
-        <ReduxProvider>
-          {children}
-          <Footer />
-        </ReduxProvider>
+        <AuthProvider>
+          <ReduxProvider>
+            {children}
+            <Footer />
+          </ReduxProvider>
+        </AuthProvider>
+        <Toaster />
       </body>
     </html>
   )

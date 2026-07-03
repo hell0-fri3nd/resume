@@ -8,6 +8,8 @@ import { useAppSelector } from '@/store/hooks';
 import { selectAllResumes } from '@/store/slices/resumes-slice';
 import CreateResumeDialog from './components/create-resume-dialog';
 import ResumeCard from './components/resume-card';
+import AccountMenu from './components/account-menu';
+import OnboardingGate from './components/onboarding-gate';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -15,6 +17,7 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <OnboardingGate />
       {/* Header */}
       <header className="border-b border-border bg-card sticky top-0 z-40">
         <div className="w-full md:w-[90%] mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between gap-4">
@@ -34,7 +37,10 @@ export default function DashboardPage() {
               esume
             </span>
           </Button>
-          <CreateResumeDialog />
+          <div className="flex items-center gap-2">
+            <AccountMenu />
+            <CreateResumeDialog />
+          </div>
         </div>
       </header>
 

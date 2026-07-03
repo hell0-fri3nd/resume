@@ -53,6 +53,20 @@ const resumesSlice = createSlice({
       adapter.addOne(state, action.payload);
     },
 
+    /**
+     * Insert or replace a resume wholesale — used by cloud sync when a newer
+     * copy arrives from Supabase. Unlike `importResume`, this overwrites an
+     * existing resume with the same id.
+     */
+    upsertResume: (state, action: PayloadAction<Resume>) => {
+      adapter.upsertOne(state, action.payload);
+    },
+
+    /** Batch version of `upsertResume` for pulling many resumes at once. */
+    upsertResumes: (state, action: PayloadAction<Resume[]>) => {
+      adapter.upsertMany(state, action.payload);
+    },
+
     renameResume: (state, action: PayloadAction<{ id: string; name: string }>) => {
       const resume = state.entities[action.payload.id];
       if (resume) {
@@ -435,6 +449,8 @@ const resumesSlice = createSlice({
 export const {
   createResume,
   importResume,
+  upsertResume,
+  upsertResumes,
   renameResume,
   duplicateResume,
   deleteResume,
