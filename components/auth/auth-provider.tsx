@@ -26,14 +26,17 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 
 const isConfigured =
   !!process.env.NEXT_PUBLIC_SUPABASE_URL &&
-  !!process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+  !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
+  console.log("URL:", process.env.NEXT_PUBLIC_SUPABASE_URL);
+console.log("KEY:", process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+
   // One client instance for the lifetime of the provider.
-  const supabase = useMemo(() => (isConfigured ? createClient() : null), []);
+  const supabase = useMemo(() => createClient(), []);
 
   useEffect(() => {
     if (!supabase) {

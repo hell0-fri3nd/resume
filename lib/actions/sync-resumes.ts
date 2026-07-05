@@ -1,9 +1,10 @@
 'use server';
 
 import type { Prisma } from '@prisma/client';
-import { prisma } from '@/lib/prisma';
+// import { prisma } from '@/lib/prisma';
 import { createClient } from '@/lib/supabase/server';
 import type { Resume } from '@/lib/types';
+import prisma from '../prisma';
 
 /**
  * Server-side resume sync via Prisma.

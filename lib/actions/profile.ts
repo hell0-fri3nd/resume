@@ -1,7 +1,8 @@
 'use server';
 
-import { prisma } from '@/lib/prisma';
+// import { prisma } from '@/lib/prisma';
 import { createClient } from '@/lib/supabase/server';
+import prisma from '../prisma';
 
 export interface ProfileInfo {
   fullName: string;
