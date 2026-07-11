@@ -36,14 +36,16 @@ export default function AccountMenu() {
 
   if (!user) {
     return (
-      <Button
-        variant="outline"
-        onClick={() => router.push('/login')}
-        className="gap-2"
-      >
-        <Cloud size={16} />
-        Sign in to sync
-      </Button>
+      <div>
+      </div>
+      // <Button
+      //   variant="outline"
+      //   onClick={() => router.push('/login')}
+      //   className="gap-2"
+      // >
+      //   <Cloud size={16} />
+      //   Sign in to sync
+      // </Button>
     );
   }
 

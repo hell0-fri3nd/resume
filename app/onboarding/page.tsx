@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
-import { prisma } from '@/lib/prisma';
+import prisma from '@/lib/prisma';
 import OnboardingForm from './onboarding-form';
 
 /**
