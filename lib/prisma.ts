@@ -8,7 +8,7 @@ const globalForPrisma = global as {
 };
 
 const adapter = new PrismaPg({
-  connectionString: process.env.DATABASE_URL!,
+  connectionString: process.env.DIRECT_URL!,
 });
 
 const prisma =
