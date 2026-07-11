@@ -9,6 +9,7 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { completeOnboarding } from '@/lib/actions/profile';
+import Image from 'next/image';
 
 export default function OnboardingForm({
   defaultName,
@@ -26,11 +27,11 @@ export default function OnboardingForm({
 
     startTransition(async () => {
       try {
+
         await completeOnboarding(trimmed);
         toast.success(`Welcome, ${trimmed.split(' ')[0]}!`);
-        router.replace('/dashboard');
-        // Ensure server components (and the onboarding gate) see fresh state.
         router.refresh();
+
       } catch (err) {
         toast.error('Could not save your details. Please try again.');
         console.error('[onboarding]', err);
@@ -41,7 +42,19 @@ export default function OnboardingForm({
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <Card className="w-full max-w-sm p-8">
-        <div className="space-y-1 text-center">
+        <div className="flex flex-col items-center gap-2 text-center">
+
+          <span className="flex items-center gap-1 text-2xl font-semibold tracking-tight text-foreground">
+            <Image
+            src="/letter-r.png"
+            alt="R"
+            width={36}
+            height={36}
+            className="h-9 w-9 shrink-0 rounded-lg object-contain"
+            />
+            esume
+            </span>
+
           <h1 className="text-xl font-semibold text-foreground">
             Welcome! Let&apos;s set up your profile
           </h1>
@@ -50,7 +63,7 @@ export default function OnboardingForm({
           </p>
         </div>
 
-        <form onSubmit={submit} className="mt-8 space-y-6">
+        <form onSubmit={submit} className="mt-0 space-y-6">
           <div className="space-y-2">
             <Label htmlFor="fullName">Full name</Label>
             <Input
