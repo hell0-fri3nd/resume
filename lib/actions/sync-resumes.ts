@@ -102,3 +102,26 @@ export async function syncResumesAction(
 
   return { toStore, pushed: toUpdate.length + toCreate.length };
 }
+
+/**
+ * Delete a resume from the database.
+ *
+ * This is called when a user deletes a resume locally, to ensure the deletion
+ * is also propagated to the server and the resume doesn't get restored on the
+ * next sync.
+ */
+export async function deleteResumeAction(resumeId: string): Promise<void> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  // If not authenticated, just return silently - the local delete will still work
+  // and there's no server-side data to delete
+  if (!user) return;
+
+  // Delete the resume, scoped to the current user for security
+  await prisma.resume.deleteMany({
+    where: { id: resumeId, userId: user.id },
+  });
+}

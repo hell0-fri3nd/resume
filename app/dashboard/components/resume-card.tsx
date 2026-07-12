@@ -29,6 +29,7 @@ import {
   duplicateResume,
   renameResume,
 } from '@/store/slices/resumes-slice';
+import { deleteResumeAction } from '@/lib/actions/sync-resumes';
 import type { Resume } from '@/lib/types';
 
 const TEMPLATE_LABELS: Record<Resume['template'], string> = {
@@ -165,6 +166,8 @@ export default function ResumeCard({ resume }: { resume: Resume }) {
               variant="destructive"
               onClick={() => {
                 dispatch(deleteResume(resume.id));
+                // Also delete from server so it doesn't get restored on next sync
+                deleteResumeAction(resume.id);
                 setDeleteOpen(false);
               }}
             >
