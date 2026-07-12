@@ -48,7 +48,7 @@ export default function CreateResumeDialog() {
       <DialogTrigger asChild>
         <Button className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground">
           <Plus size={16} />
-          <span className="hidden sm:inline">Create new resume</span>
+          <span className="z">Create new resume</span>
         </Button>
       </DialogTrigger>
       <DialogContent>
