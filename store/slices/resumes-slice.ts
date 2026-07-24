@@ -5,7 +5,6 @@ import {
   type PayloadAction,
 } from '@reduxjs/toolkit';
 import {
-  DEFAULT_SECTION_ORDER,
   createEmptyResume,
   type Certification,
   type Contact,
@@ -18,7 +17,6 @@ import {
   type Skill,
   type TemplateType,
 } from '@/lib/types';
-import type { ExtractedResume } from '@/lib/actions/extract-resume';
 import type { RootState } from '../index';
 
 const adapter = createEntityAdapter<Resume>({
@@ -48,185 +46,6 @@ const resumesSlice = createSlice({
       prepare: (input: { name: string; template?: TemplateType }) => ({
         payload: createEmptyResume(input.name, input.template ?? 'fshape'),
       }),
-    },
-
-    createResumeFromExtract: {
-      reducer: (state, action: PayloadAction<Resume>) => {
-        adapter.addOne(state, action.payload);
-      },
-      prepare: (input: {
-        name: string;
-        template?: TemplateType;
-        extracted: ExtractedResume;
-      }) => {
-        const { extracted } = input;
-        const now = new Date().toISOString();
-
-        // Sort helpers — descending (most recent first). YYYY-MM-DD strings
-        // compare lexicographically, so string compare works. Empty strings
-        // sort last (treated as oldest/unknown).
-        const dateKey = (d: string): string => (d ? d : '0000-00-00');
-        const compareDateDesc = <T extends { startDate: string; endDate: string; currentlyWorking?: boolean }>(
-          a: T,
-          b: T
-        ): number => {
-          // Currently working entries always come first.
-          if (a.currentlyWorking && !b.currentlyWorking) return -1;
-          if (!a.currentlyWorking && b.currentlyWorking) return 1;
-          const endCmp = dateKey(b.endDate).localeCompare(dateKey(a.endDate));
-          if (endCmp !== 0) return endCmp;
-          return dateKey(b.startDate).localeCompare(dateKey(a.startDate));
-        };
-        const sortByEnd = <T extends { startDate: string; endDate: string; currentlyWorking?: boolean }>(
-          arr: T[]
-        ): T[] => [...arr].sort(compareDateDesc);
-
-        // Group experience by company, sort roles within each company by date desc
-        // (so promotions at the same company stay together, newest role on top),
-        // then order companies by their most-recent role.
-        const groupExperienceByCompany = <T extends { company: string; startDate: string; endDate: string; currentlyWorking?: boolean }>(
-          arr: T[]
-        ): T[] => {
-          const groups = new Map<string, T[]>();
-          const order: string[] = [];
-          for (const item of arr) {
-            const key = (item.company ?? '').trim().toLowerCase();
-            if (!groups.has(key)) {
-              groups.set(key, []);
-              order.push(key);
-            }
-            groups.get(key)!.push(item);
-          }
-          // Sort each group by date desc.
-          for (const key of order) {
-            groups.get(key)!.sort(compareDateDesc);
-          }
-          // Sort company groups by their most-recent (first) role.
-          order.sort((a, b) => {
-            const topA = groups.get(a)![0];
-            const topB = groups.get(b)![0];
-            return compareDateDesc(topA, topB);
-          });
-          return order.flatMap((key) => groups.get(key)!);
-        };
-
-        const customSections: CustomSection[] = (() => {
-          // Deduplicate custom sections by title (case-insensitive, trimmed).
-          // If the LLM emits multiple sections with the same title, merge their items.
-          const bucket = new Map<
-            string,
-            { title: string; items: ExtractedResume['customSections'][number]['items'] }
-          >();
-          const order: string[] = [];
-          for (const cs of extracted.customSections ?? []) {
-            const key = (cs.title ?? '').trim().toLowerCase();
-            if (!key) continue;
-            if (!bucket.has(key)) {
-              bucket.set(key, { title: cs.title, items: [] });
-              order.push(key);
-            }
-            bucket.get(key)!.items.push(...cs.items);
-          }
-          return order.map((key) => {
-            const entry = bucket.get(key)!;
-            return {
-              id: nanoid(),
-              title: entry.title,
-              items: sortByEnd(
-                entry.items.map((item) => ({
-                  id: nanoid(),
-                  title: item.title,
-                  role: item.role ?? '',
-                  startDate: item.startDate ?? '',
-                  endDate: item.endDate ?? '',
-                  description: item.description,
-                }))
-              ),
-            };
-          });
-        })();
-        const resume: Resume = {
-          id: nanoid(),
-          name: input.name.trim() || 'Untitled Resume',
-          createdAt: now,
-          updatedAt: now,
-          contact: {
-            fullName: extracted.contact?.fullName ?? '',
-            email: extracted.contact?.email ?? '',
-            phone: extracted.contact?.phone ?? '',
-            location: extracted.contact?.location ?? '',
-            website: extracted.contact?.website ?? '',
-            linkedin: extracted.contact?.linkedin ?? '',
-          },
-          summary: extracted.summary ?? '',
-          experience: groupExperienceByCompany(
-            (extracted.experience ?? []).map((e) => ({
-              id: nanoid(),
-              ...e,
-            }))
-          ),
-          education: [...(extracted.education ?? [])]
-            .map((e) => ({
-              id: nanoid(),
-              ...e,
-            }))
-            .sort((a, b) =>
-              dateKey(b.graduationDate).localeCompare(dateKey(a.graduationDate))
-            ),
-          certifications: [...(extracted.certifications ?? [])]
-            .map((c) => ({
-              id: nanoid(),
-              ...c,
-            }))
-            .sort((a, b) =>
-              dateKey(b.issueDate).localeCompare(dateKey(a.issueDate))
-            ),
-          skills: (() => {
-            // Deduplicate skills by category (case-insensitive, trimmed).
-            // Merge skill lists across duplicate category entries and drop
-            // duplicate skill strings within each category.
-            const bucket = new Map<
-              string,
-              { category: string; skills: string[]; seen: Set<string> }
-            >();
-            const order: string[] = [];
-            for (const s of extracted.skills ?? []) {
-              const key = (s.category ?? '').trim().toLowerCase();
-              if (!key) continue;
-              if (!bucket.has(key)) {
-                bucket.set(key, {
-                  category: s.category,
-                  skills: [],
-                  seen: new Set(),
-                });
-                order.push(key);
-              }
-              const entry = bucket.get(key)!;
-              for (const skill of s.skills ?? []) {
-                const skillKey = skill.trim().toLowerCase();
-                if (!skillKey || entry.seen.has(skillKey)) continue;
-                entry.seen.add(skillKey);
-                entry.skills.push(skill.trim());
-              }
-            }
-            return order.map((key) => {
-              const entry = bucket.get(key)!;
-              return {
-                id: nanoid(),
-                category: entry.category,
-                skills: entry.skills,
-              };
-            });
-          })(),
-          customSections,
-          template: input.template ?? 'fshape',
-          sectionOrder: [
-            ...DEFAULT_SECTION_ORDER,
-            ...customSections.map((cs) => cs.id),
-          ],
-        };
-        return { payload: resume };
-      },
     },
 
     /** Import a resume object as-is (used by the legacy localStorage migration). */
@@ -629,7 +448,6 @@ const resumesSlice = createSlice({
 
 export const {
   createResume,
-  createResumeFromExtract,
   importResume,
   upsertResume,
   upsertResumes,
